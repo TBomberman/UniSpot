@@ -6,14 +6,14 @@
 //! similar human-readable names and provide a failsafe for some of
 //! the probable adversarial scenarios.
 
-pub use pyth_sdk::{
+pub use unispot_sdk::{
     Identifier,
     PriceStatus,
     UnixTimestamp,
 };
 #[cfg(feature = "solana")]
 use {
-    pyth_sdk_solana::state::PriceAccount,
+    unispot_sdk_solana::state::PriceAccount,
     solitaire::{
         Derive,
         Info,
@@ -282,14 +282,14 @@ impl BatchPriceAttestation {
 
 impl PriceAttestation {
     #[cfg(feature = "solana")]
-    pub fn from_pyth_price_bytes(
+    pub fn from_unispot_price_bytes(
         price_id: Identifier,
         attestation_time: UnixTimestamp,
         last_attested_publish_time: UnixTimestamp,
         value: &[u8],
     ) -> Result<Self, ErrBox> {
-        let price_struct = pyth_sdk_solana::state::load_price_account(value)?;
-        Ok(Self::from_pyth_price_struct(
+        let price_struct = unispot_sdk_solana::state::load_price_account(value)?;
+        Ok(Self::from_unispot_price_struct(
             price_id,
             attestation_time,
             last_attested_publish_time,
@@ -297,7 +297,7 @@ impl PriceAttestation {
         ))
     }
     #[cfg(feature = "solana")]
-    pub fn from_pyth_price_struct(
+    pub fn from_unispot_price_struct(
         price_id: Identifier,
         attestation_time: UnixTimestamp,
         last_attested_publish_time: UnixTimestamp,
@@ -323,7 +323,7 @@ impl PriceAttestation {
         }
     }
 
-    /// Serialize this attestation according to the Pyth-over-wormhole serialization format
+    /// Serialize this attestation according to the UniSpot-over-wormhole serialization format
     pub fn serialize(&self) -> Vec<u8> {
         // A nifty trick to get us yelled at if we forget to serialize a field
         #[deny(warnings)]
@@ -502,7 +502,7 @@ impl PriceAttestation {
 mod tests {
     use {
         super::*,
-        pyth_sdk_solana::state::PriceStatus,
+        unispot_sdk_solana::state::PriceStatus,
     };
 
     fn mock_attestation(prod: Option<[u8; 32]>, price: Option<[u8; 32]>) -> PriceAttestation {

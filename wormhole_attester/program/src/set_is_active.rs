@@ -1,7 +1,7 @@
 use {
     crate::config::{
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
     solitaire::{
         trace,
@@ -28,13 +28,13 @@ pub struct SetIsActive<'b> {
     pub payer:     Mut<Signer<Info<'b>>>,
 }
 
-/// Alters the current settings of pyth2wormhole
+/// Alters the current settings of unispot2wormhole
 pub fn set_is_active(
     _ctx: &ExecutionContext,
     accs: &mut SetIsActive,
     new_is_active: bool,
 ) -> SoliResult<()> {
-    let cfg_struct: &mut Pyth2WormholeConfig = &mut accs.config; // unpack Data via nested Deref impls
+    let cfg_struct: &mut UniSpot2WormholeConfig = &mut accs.config; // unpack Data via nested Deref impls
     match &cfg_struct.ops_owner {
         None => Err(SolitaireError::InvalidOwner(*accs.ops_owner.info().key)),
         Some(current_ops_owner) => {

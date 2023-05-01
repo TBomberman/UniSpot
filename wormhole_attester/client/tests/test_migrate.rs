@@ -5,13 +5,13 @@ pub mod fixtures;
 use {
     fixtures::passthrough,
     log::info,
-    pyth_wormhole_attester::config::{
+    unispot_wormhole_attester::config::{
         OldP2WConfigAccount,
-        OldPyth2WormholeConfig,
+        OldUniSpot2WormholeConfig,
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
-    pyth_wormhole_attester_client as p2wc,
+    unispot_wormhole_attester_client as p2wc,
     serial_test::serial,
     solana_program::system_program,
     solana_program_test::*,
@@ -39,14 +39,14 @@ async fn test_migrate_works() -> Result<(), solitaire::ErrBox> {
 
     // Authorities
     let p2w_owner = Keypair::new();
-    let pyth_owner = Pubkey::new_unique();
+    let unispot_owner = Pubkey::new_unique();
 
     // On-chain state
-    let old_p2w_config = OldPyth2WormholeConfig {
+    let old_p2w_config = OldUniSpot2WormholeConfig {
         owner: p2w_owner.pubkey(),
         wh_prog: wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner,
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner,
         is_active: true,
     };
 
@@ -54,9 +54,9 @@ async fn test_migrate_works() -> Result<(), solitaire::ErrBox> {
 
     // Populate test environment
     let mut p2w_test = ProgramTest::new(
-        "pyth_wormhole_attester",
+        "unispot_wormhole_attester",
         p2w_program_id,
-        processor!(pyth_wormhole_attester::instruction::solitaire),
+        processor!(unispot_wormhole_attester::instruction::solitaire),
     );
 
     // Plant filled config accounts
@@ -102,23 +102,23 @@ async fn test_migrate_already_migrated() -> Result<(), solitaire::ErrBox> {
 
     // Authorities
     let p2w_owner = Keypair::new();
-    let pyth_owner = Pubkey::new_unique();
+    let unispot_owner = Pubkey::new_unique();
     let ops_owner = Keypair::new();
 
     // On-chain state
-    let old_p2w_config = OldPyth2WormholeConfig {
+    let old_p2w_config = OldUniSpot2WormholeConfig {
         owner: p2w_owner.pubkey(),
         wh_prog: wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner,
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner,
         is_active: true,
     };
 
-    let new_p2w_config = Pyth2WormholeConfig {
+    let new_p2w_config = UniSpot2WormholeConfig {
         owner: p2w_owner.pubkey(),
         wh_prog: wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner,
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner,
         is_active: true,
         ops_owner: Some(ops_owner.pubkey()),
     };
@@ -127,9 +127,9 @@ async fn test_migrate_already_migrated() -> Result<(), solitaire::ErrBox> {
 
     // Populate test environment
     let mut p2w_test = ProgramTest::new(
-        "pyth_wormhole_attester",
+        "unispot_wormhole_attester",
         p2w_program_id,
-        processor!(pyth_wormhole_attester::instruction::solitaire),
+        processor!(unispot_wormhole_attester::instruction::solitaire),
     );
 
     // Plant filled config accounts

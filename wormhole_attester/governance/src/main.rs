@@ -6,10 +6,10 @@ use {
         Action,
         Cli,
     },
-    pyth_wormhole_attester_client::{
+    unispot_wormhole_attester_client::{
         get_set_config_ix,
         get_set_is_active_ix,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
     remote_executor::state::governance_payload::{
         ExecutorPayload,
@@ -29,15 +29,15 @@ fn main() -> Result<()> {
             payer,
             new_owner,
             wormhole,
-            pyth_owner,
+            unispot_owner,
             max_batch_size,
             is_active,
             ops_owner,
         } => {
-            let new_config = Pyth2WormholeConfig {
+            let new_config = UniSpot2WormholeConfig {
                 owner: new_owner,
                 wh_prog: wormhole,
-                pyth_owner,
+                unispot_owner,
                 max_batch_size,
                 is_active,
                 ops_owner,

@@ -1,11 +1,11 @@
 pub mod fixtures;
 
 use {
-    pyth_wormhole_attester::config::{
+    unispot_wormhole_attester::config::{
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
-    pyth_wormhole_attester_client as p2wc,
+    unispot_wormhole_attester_client as p2wc,
     solana_program_test::*,
     solana_sdk::{
         account::Account,
@@ -34,24 +34,24 @@ async fn test_setting_is_active_works() -> Result<(), p2wc::ErrBoxSend> {
 
     // Authorities
     let p2w_owner = Pubkey::new_unique();
-    let pyth_owner = Pubkey::new_unique();
+    let unispot_owner = Pubkey::new_unique();
     let ops_owner = Keypair::new();
 
     // On-chain state
-    let p2w_config = Pyth2WormholeConfig {
+    let p2w_config = UniSpot2WormholeConfig {
         owner: p2w_owner,
         wh_prog: wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner,
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner,
         is_active: true,
         ops_owner: Some(ops_owner.pubkey()),
     };
 
     // Populate test environment
     let mut p2w_test = ProgramTest::new(
-        "pyth_wormhole_attester",
+        "unispot_wormhole_attester",
         p2w_program_id,
-        processor!(pyth_wormhole_attester::instruction::solitaire),
+        processor!(unispot_wormhole_attester::instruction::solitaire),
     );
 
     // Plant a filled config account
@@ -86,7 +86,7 @@ async fn test_setting_is_active_works() -> Result<(), p2wc::ErrBoxSend> {
 
     let config = ctx
         .banks_client
-        .get_account_data_with_borsh::<Pyth2WormholeConfig>(p2w_config_addr)
+        .get_account_data_with_borsh::<UniSpot2WormholeConfig>(p2w_config_addr)
         .await?;
 
     assert!(!config.is_active);
@@ -107,7 +107,7 @@ async fn test_setting_is_active_works() -> Result<(), p2wc::ErrBoxSend> {
 
     let config = ctx
         .banks_client
-        .get_account_data_with_borsh::<Pyth2WormholeConfig>(p2w_config_addr)
+        .get_account_data_with_borsh::<UniSpot2WormholeConfig>(p2w_config_addr)
         .await?;
 
     assert!(config.is_active);
@@ -140,23 +140,23 @@ async fn test_setting_is_active_does_not_work_without_ops_owner() -> Result<(), 
 
     // Authorities
     let p2w_owner = Pubkey::new_unique();
-    let pyth_owner = Keypair::new();
+    let unispot_owner = Keypair::new();
 
     // On-chain state
-    let p2w_config = Pyth2WormholeConfig {
+    let p2w_config = UniSpot2WormholeConfig {
         owner:          p2w_owner,
         wh_prog:        wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner:     pyth_owner.pubkey(),
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner:     unispot_owner.pubkey(),
         is_active:      true,
         ops_owner:      None,
     };
 
     // Populate test environment
     let mut p2w_test = ProgramTest::new(
-        "pyth_wormhole_attester",
+        "unispot_wormhole_attester",
         p2w_program_id,
-        processor!(pyth_wormhole_attester::instruction::solitaire),
+        processor!(unispot_wormhole_attester::instruction::solitaire),
     );
 
     // Plant a filled config account
@@ -176,11 +176,11 @@ async fn test_setting_is_active_does_not_work_without_ops_owner() -> Result<(), 
     let mut ctx = p2w_test.start_with_context().await;
 
     // No one could should be able to handle
-    // For example pyth_owner is used here.
+    // For example unispot_owner is used here.
     let set_is_active_true_tx = p2wc::gen_set_is_active_tx(
         clone_keypair(&ctx.payer),
         p2w_program_id,
-        pyth_owner,
+        unispot_owner,
         true,
         ctx.last_blockhash,
     )

@@ -1,6 +1,6 @@
 use {
-    pyth_wormhole_attester::error::AttesterCustomError,
-    pyth_wormhole_attester_client::util::send_and_confirm_transaction_with_config,
+    unispot_wormhole_attester::error::AttesterCustomError,
+    unispot_wormhole_attester_client::util::send_and_confirm_transaction_with_config,
     solana_client::rpc_config::RpcSendTransactionConfig,
     solana_program::instruction::InstructionError,
     solana_sdk::transaction::TransactionError,
@@ -35,13 +35,13 @@ use {
         IntCounter,
         IntGauge,
     },
-    pyth_wormhole_attester::{
+    unispot_wormhole_attester::{
         attest::P2W_MAX_BATCH_SIZE,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
-    pyth_wormhole_attester_client::{
+    unispot_wormhole_attester_client::{
         attestation_cfg::SymbolBatch,
-        crawl_pyth_mapping,
+        crawl_unispot_mapping,
         gen_attest_tx,
         gen_init_tx,
         gen_migrate_tx,
@@ -58,7 +58,7 @@ use {
         RLMutex,
         HEALTHCHECK_STATE,
     },
-    pyth_wormhole_attester_sdk::P2WEmitter,
+    unispot_wormhole_attester_sdk::P2WEmitter,
     sha3::{
         Digest,
         Sha3_256,
@@ -144,7 +144,7 @@ async fn main() -> Result<(), ErrBox> {
     match cli.action {
         Action::Init {
             owner_addr,
-            pyth_owner_addr,
+            unispot_owner_addr,
             wh_prog,
             is_active,
             ops_owner_addr,
@@ -152,10 +152,10 @@ async fn main() -> Result<(), ErrBox> {
             let tx = gen_init_tx(
                 payer,
                 p2w_addr,
-                Pyth2WormholeConfig {
+                UniSpot2WormholeConfig {
                     owner: owner_addr,
                     wh_prog,
-                    pyth_owner: pyth_owner_addr,
+                    unispot_owner: unispot_owner_addr,
                     is_active: is_active.unwrap_or(true),
                     max_batch_size: P2W_MAX_BATCH_SIZE,
                     ops_owner: ops_owner_addr,
@@ -177,7 +177,7 @@ async fn main() -> Result<(), ErrBox> {
             ref owner,
             new_owner_addr,
             new_wh_prog,
-            new_pyth_owner_addr,
+            new_unispot_owner_addr,
             is_active,
             ops_owner_addr,
             remove_ops_owner,
@@ -196,10 +196,10 @@ async fn main() -> Result<(), ErrBox> {
                 payer,
                 p2w_addr,
                 read_keypair_file(&*shellexpand::tilde(&owner))?,
-                Pyth2WormholeConfig {
+                UniSpot2WormholeConfig {
                     owner:          new_owner_addr.unwrap_or(old_config.owner),
                     wh_prog:        new_wh_prog.unwrap_or(old_config.wh_prog),
-                    pyth_owner:     new_pyth_owner_addr.unwrap_or(old_config.pyth_owner),
+                    unispot_owner:     new_unispot_owner_addr.unwrap_or(old_config.unispot_owner),
                     is_active:      is_active.unwrap_or(old_config.is_active),
                     max_batch_size: P2W_MAX_BATCH_SIZE,
                     ops_owner:      new_ops_owner,
@@ -460,7 +460,7 @@ async fn attestation_config_to_batches(
     // Use the mapping if specified
     let products = if let Some(mapping_addr) = attestation_cfg.mapping_addr.as_ref() {
         let product_accounts_res =
-            crawl_pyth_mapping(&lock_and_make_rpc(rpc_cfg).await, mapping_addr).await;
+            crawl_unispot_mapping(&lock_and_make_rpc(rpc_cfg).await, mapping_addr).await;
 
         if let Err(err) = &product_accounts_res {
             error!(
@@ -481,7 +481,7 @@ async fn attestation_config_to_batches(
 /// Constructs attestation scheduling jobs from attestation config.
 fn prepare_attestation_sched_jobs(
     batch_cfg: &[SymbolBatch],
-    p2w_cfg: &Pyth2WormholeConfig,
+    p2w_cfg: &UniSpot2WormholeConfig,
     rpc_cfg: &Arc<RLMutex<RpcCfg>>,
     p2w_addr: &Pubkey,
     payer: &Keypair,
@@ -517,7 +517,7 @@ pub struct AttestationSchedJobArgs {
     pub batch_count:   usize,
     pub rpc_cfg:       Arc<RLMutex<RpcCfg>>,
     pub p2w_addr:      Pubkey,
-    pub config:        Pyth2WormholeConfig,
+    pub config:        UniSpot2WormholeConfig,
     pub payer:         Keypair,
     pub message_q_mtx: Arc<Mutex<P2WMessageQueue>>,
 }
@@ -617,7 +617,7 @@ pub struct AttestationJobArgs {
     pub batch_count:              usize,
     pub group_name:               String,
     pub p2w_addr:                 Pubkey,
-    pub config:                   Pyth2WormholeConfig,
+    pub config:                   UniSpot2WormholeConfig,
     pub payer:                    Keypair,
     pub symbols:                  Vec<P2WSymbol>,
     pub max_jobs_sema:            Arc<Semaphore>,

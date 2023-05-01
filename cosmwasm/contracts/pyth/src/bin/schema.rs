@@ -1,10 +1,10 @@
 use {
     cosmwasm_schema::write_api,
-    pyth_cosmwasm::msg::{
+    unispot_cosmwasm::msg::{
         InstantiateMsg,
         MigrateMsg,
     },
-    pyth_sdk_cw::{
+    unispot_sdk_cw::{
         ExecuteMsg,
         QueryMsg,
     },

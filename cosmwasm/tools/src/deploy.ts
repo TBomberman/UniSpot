@@ -1,4 +1,4 @@
-// Deploy Wormhole and Pyth contract to Tilt. If you want to
+// Deploy Wormhole and UniSpot contract to Tilt. If you want to
 // test the contracts locally you need to build the wormhole contract
 // as well. You can use Dockerfile.cosmwasm in the root of this repo
 // to do that.
@@ -16,7 +16,7 @@ async function deploy() {
   contracts must be imported in a deterministic order so their addresses remain
   deterministic.
 */
-  const artifacts = ["wormhole.wasm", "pyth_cosmwasm.wasm"];
+  const artifacts = ["wormhole.wasm", "unispot_cosmwasm.wasm"];
 
   /* Check that the artifact folder contains all the wasm files we expect and nothing else */
 
@@ -111,27 +111,27 @@ async function deploy() {
     "wormhole"
   );
 
-  contract = "pyth_cosmwasm.wasm";
+  contract = "unispot_cosmwasm.wasm";
 
-  const pythEmitterAddress =
+  const unispotEmitterAddress =
     "71f8dcb863d176e2c420ad6610cf687359612b6fb392e0642b0ca6b1f186aa3b";
-  const pythGovernanceEmitterAddress =
+  const unispotGovernanceEmitterAddress =
     "0000000000000000000000000000000000000000000000000000000000001234";
-  const pythChain = 1;
+  const unispotChain = 1;
 
   inst_msg = {
     wormhole_contract: addresses["wormhole.wasm"],
     data_sources: [
       {
-        emitter: Buffer.from(pythEmitterAddress, "hex").toString("base64"),
-        chain_id: pythChain,
+        emitter: Buffer.from(unispotEmitterAddress, "hex").toString("base64"),
+        chain_id: unispotChain,
       },
     ],
     governance_source: {
-      emitter: Buffer.from(pythGovernanceEmitterAddress, "hex").toString(
+      emitter: Buffer.from(unispotGovernanceEmitterAddress, "hex").toString(
         "base64"
       ),
-      chain_id: pythChain,
+      chain_id: unispotChain,
     },
     governance_source_index: 0,
     governance_sequence_number: 0,
@@ -143,11 +143,11 @@ async function deploy() {
     },
   };
 
-  console.log("Instantiating Pyth contract");
+  console.log("Instantiating UniSpot contract");
   addresses[contract] = await deployer.instantiate(
     codeIds[contract],
     inst_msg,
-    "pyth"
+    "unispot"
   );
 }
 

@@ -1,12 +1,12 @@
-# Pyth SDK Example Contract for CosmWasm
+# UniSpot SDK Example Contract for CosmWasm
 
-This repository contains an example contract that demonstrates how to query Pyth on-chain contract.
+This repository contains an example contract that demonstrates how to query UniSpot on-chain contract.
 The example [contract](src/contract.rs) has two functions:
 
-- `instantiate` sets the Pyth contract address and price feed id that the contract uses.
+- `instantiate` sets the UniSpot contract address and price feed id that the contract uses.
   This function is intended to be called once when the contract is deployed.
-  See the [price-feed-ids](https://pyth.network/developers/price-feed-ids) for the list of possible price feed ids.
-- `query` queries the Pyth contract
+  See the [price-feed-ids](https://unispot.network/developers/price-feed-ids) for the list of possible price feed ids.
+- `query` queries the UniSpot contract
   - to get the current price for the configured price feed id.
   - to fetch the default valid time period.
   - to calculate the fee for updating a price feed.

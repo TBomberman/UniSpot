@@ -1,7 +1,7 @@
 import {
   PriceServiceConnection,
   HexString,
-} from "@pythnetwork/price-service-client";
+} from "@unispotnetwork/price-service-client";
 import { MsgExecuteContract } from "@terra-money/terra.js";
 
 export class TerraPriceServiceConnection extends PriceServiceConnection {
@@ -12,28 +12,28 @@ export class TerraPriceServiceConnection extends PriceServiceConnection {
    *
    * Example usage:
    * ```typescript
-   * const pythContractAddr = CONTRACT_ADDR['testnet'];
-   * const pythMsgs = await connection.getPythPriceUpdateMessage(priceIds, pythContractAddr, wallet.key.accAddress);
-   * const tx = await wallet.createAndSignTx({ msgs: [...pythMsgs, otherMsg, anotherMsg] });
+   * const unispotContractAddr = CONTRACT_ADDR['testnet'];
+   * const unispotMsgs = await connection.getUniSpotPriceUpdateMessage(priceIds, unispotContractAddr, wallet.key.accAddress);
+   * const tx = await wallet.createAndSignTx({ msgs: [...unispotMsgs, otherMsg, anotherMsg] });
    * ```
    *
    * This will throw an axios error if there is a network problem or the price service returns non-ok response (e.g: Invalid price ids)
    *
    * @param priceIds Array of hex-encoded price ids without leading 0x.
-   * @param pythContractAddr: Pyth contract address. you can use CONTRACT_ADDR that contains Pyth contract addresses in
-   * the networks that Pyth is live on.
+   * @param unispotContractAddr: UniSpot contract address. you can use CONTRACT_ADDR that contains UniSpot contract addresses in
+   * the networks that UniSpot is live on.
    * @param senderAddr: Sender address of the created messages. Sender should sign and pay the transaction that contains them.
    * @returns Array of Terra messages that can be included in a transaction to update the given prices.
    */
   async getPriceUpdateMessages(
     priceIds: HexString[],
-    pythContractAddr: string,
+    unispotContractAddr: string,
     senderAddr: string
   ): Promise<MsgExecuteContract[]> {
     const latestVaas = await this.getLatestVaas(priceIds);
     return latestVaas.map(
       (vaa) =>
-        new MsgExecuteContract(senderAddr, pythContractAddr, {
+        new MsgExecuteContract(senderAddr, unispotContractAddr, {
           submit_vaa: {
             data: vaa,
           },

@@ -2,13 +2,13 @@ import {
   PriceFeed,
   Price,
   UnixTimestamp,
-} from "@pythnetwork/price-service-sdk";
+} from "@unispotnetwork/price-service-sdk";
 
 export {
   PriceFeed,
   Price,
   UnixTimestamp,
-} from "@pythnetwork/price-service-sdk";
+} from "@unispotnetwork/price-service-sdk";
 
 export enum PriceAttestationStatus {
   Unknown = 0,

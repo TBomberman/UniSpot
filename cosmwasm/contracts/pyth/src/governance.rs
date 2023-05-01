@@ -1,12 +1,12 @@
 use {
-    crate::state::PythDataSource,
+    crate::state::UniSpotDataSource,
     byteorder::{
         BigEndian,
         ReadBytesExt,
         WriteBytesExt,
     },
     cosmwasm_std::Binary,
-    pyth_wormhole_attester_sdk::ErrBox,
+    unispot_wormhole_attester_sdk::ErrBox,
     schemars::JsonSchema,
     serde::{
         Deserialize,
@@ -18,13 +18,13 @@ use {
     },
 };
 
-const PYTH_GOVERNANCE_MAGIC: &[u8] = b"PTGM";
+const UNISPOT_GOVERNANCE_MAGIC: &[u8] = b"PTGM";
 
 /// The type of contract that can accept a governance instruction.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[repr(u8)]
 pub enum GovernanceModule {
-    /// The PythNet executor contract. Messages sent to the
+    /// The UniSpotNet executor contract. Messages sent to the
     Executor = 0,
     /// A target chain contract (like this one!)
     Target   = 1,
@@ -67,7 +67,7 @@ pub enum GovernanceAction {
     /// is completed.
     AuthorizeGovernanceDataSourceTransfer { claim_vaa: Binary }, // 1
     /// Set the set of authorized emitters for price update messages.
-    SetDataSources { data_sources: Vec<PythDataSource> }, // 2
+    SetDataSources { data_sources: Vec<UniSpotDataSource> }, // 2
     /// Set the fee to val * (10 ** expo)
     SetFee { val: u64, expo: u64 }, // 3
     /// Set the default valid period to the provided number of seconds
@@ -87,12 +87,12 @@ pub struct GovernanceInstruction {
 
 impl GovernanceInstruction {
     pub fn deserialize(mut bytes: impl ReadBytesExt) -> Result<Self, ErrBox> {
-        let mut magic_vec = vec![0u8; PYTH_GOVERNANCE_MAGIC.len()];
+        let mut magic_vec = vec![0u8; UNISPOT_GOVERNANCE_MAGIC.len()];
         bytes.read_exact(magic_vec.as_mut_slice())?;
 
-        if magic_vec.as_slice() != PYTH_GOVERNANCE_MAGIC {
+        if magic_vec.as_slice() != UNISPOT_GOVERNANCE_MAGIC {
             return Err(format!(
-                "Invalid magic {magic_vec:02X?}, expected {PYTH_GOVERNANCE_MAGIC:02X?}",
+                "Invalid magic {magic_vec:02X?}, expected {UNISPOT_GOVERNANCE_MAGIC:02X?}",
             )
             .into());
         }
@@ -117,13 +117,13 @@ impl GovernanceInstruction {
             }
             2 => {
                 let num_data_sources = bytes.read_u8()?;
-                let mut data_sources: Vec<PythDataSource> = vec![];
+                let mut data_sources: Vec<UniSpotDataSource> = vec![];
                 for _ in 0..num_data_sources {
                     let chain_id = bytes.read_u16::<BigEndian>()?;
                     let mut emitter_address: [u8; 32] = [0; 32];
                     bytes.read_exact(&mut emitter_address)?;
 
-                    data_sources.push(PythDataSource {
+                    data_sources.push(UniSpotDataSource {
                         emitter: Binary::from(&emitter_address),
                         chain_id,
                     });
@@ -169,7 +169,7 @@ impl GovernanceInstruction {
     pub fn serialize(&self) -> Result<Vec<u8>, ErrBox> {
         let mut buf = vec![];
 
-        buf.write_all(PYTH_GOVERNANCE_MAGIC)?;
+        buf.write_all(UNISPOT_GOVERNANCE_MAGIC)?;
         buf.write_u8(self.module.to_u8())?;
 
         match &self.action {

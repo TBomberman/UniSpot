@@ -1,7 +1,7 @@
 use {
     crate::config::{
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
     solitaire::{
         trace,
@@ -29,7 +29,7 @@ pub struct Initialize<'b> {
 pub fn initialize(
     ctx: &ExecutionContext,
     accs: &mut Initialize,
-    data: Pyth2WormholeConfig,
+    data: UniSpot2WormholeConfig,
 ) -> SoliResult<()> {
     accs.new_config
         .create(ctx, accs.payer.info().key, CreationLamports::Exempt)?;

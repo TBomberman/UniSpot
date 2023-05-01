@@ -8,7 +8,7 @@ use {
         debug,
         warn,
     },
-    pyth_sdk_solana::state::PriceAccount,
+    unispot_sdk_solana::state::PriceAccount,
     solana_client::nonblocking::rpc_client::RpcClient,
     std::time::{
         Duration,
@@ -69,7 +69,7 @@ impl<'a> BatchState {
                             .map(|(idx, opt)| {
                                 // Take each Some(acc), make it None and log on load_price_account() error
                                 opt.and_then(|acc| {
-                                    pyth_sdk_solana::state::load_price_account(&acc.data)
+                                    unispot_sdk_solana::state::load_price_account(&acc.data)
                                         .cloned() // load_price_account() transmutes the data reference into another reference, and owning acc_opts is not enough
                                         .map_err(|e| {
                                             warn!(

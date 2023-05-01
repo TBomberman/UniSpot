@@ -16,7 +16,7 @@ pub use {
         HEALTHCHECK_STATE,
     },
     message::P2WMessageQueue,
-    pyth_wormhole_attester::Pyth2WormholeConfig,
+    unispot_wormhole_attester::UniSpot2WormholeConfig,
     util::{
         start_metrics_server,
         RLMutex,
@@ -42,12 +42,12 @@ use {
         trace,
         warn,
     },
-    pyth_sdk_solana::state::{
+    unispot_sdk_solana::state::{
         load_mapping_account,
         load_price_account,
         load_product_account,
     },
-    pyth_wormhole_attester::{
+    unispot_wormhole_attester::{
         attestation_state::AttestationStatePDA,
         config::{
             OldP2WConfigAccount,
@@ -59,7 +59,7 @@ use {
         },
         AttestData,
     },
-    pyth_wormhole_attester_sdk::P2WEmitter,
+    unispot_wormhole_attester_sdk::P2WEmitter,
     solana_client::nonblocking::rpc_client::RpcClient,
     solana_program::{
         hash::Hash,
@@ -94,7 +94,7 @@ pub type ErrBoxSend = Box<dyn std::error::Error + Send + Sync>;
 pub fn gen_init_tx(
     payer: Keypair,
     p2w_addr: Pubkey,
-    config: Pyth2WormholeConfig,
+    config: UniSpot2WormholeConfig,
     latest_blockhash: Hash,
 ) -> Result<Transaction, ErrBox> {
     let payer_pubkey = payer.pubkey();
@@ -111,7 +111,7 @@ pub fn gen_init_tx(
     ];
 
     let ix_data = (
-        pyth_wormhole_attester::instruction::Instruction::Initialize,
+        unispot_wormhole_attester::instruction::Instruction::Initialize,
         config,
     );
 
@@ -132,7 +132,7 @@ pub fn get_set_config_ix(
     p2w_addr: &Pubkey,
     owner_pubkey: &Pubkey,
     payer_pubkey: &Pubkey,
-    new_config: Pyth2WormholeConfig,
+    new_config: UniSpot2WormholeConfig,
 ) -> Result<Instruction, ErrBox> {
     let acc_metas = vec![
         // config
@@ -148,7 +148,7 @@ pub fn get_set_config_ix(
         AccountMeta::new(system_program::id(), false),
     ];
     let ix_data = (
-        pyth_wormhole_attester::instruction::Instruction::SetConfig,
+        unispot_wormhole_attester::instruction::Instruction::SetConfig,
         new_config,
     );
     Ok(Instruction::new_with_bytes(
@@ -162,7 +162,7 @@ pub fn gen_set_config_tx(
     payer: Keypair,
     p2w_addr: Pubkey,
     owner: Keypair,
-    new_config: Pyth2WormholeConfig,
+    new_config: UniSpot2WormholeConfig,
     latest_blockhash: Hash,
 ) -> Result<Transaction, ErrBox> {
     let ix = get_set_config_ix(&p2w_addr, &owner.pubkey(), &payer.pubkey(), new_config)?;
@@ -196,7 +196,7 @@ pub fn get_set_is_active_ix(
     ];
 
     let ix_data = (
-        pyth_wormhole_attester::instruction::Instruction::SetIsActive,
+        unispot_wormhole_attester::instruction::Instruction::SetIsActive,
         new_is_active,
     );
     Ok(Instruction::new_with_bytes(
@@ -255,7 +255,7 @@ pub fn gen_migrate_tx(
     ];
 
     let ix_data = (
-        pyth_wormhole_attester::instruction::Instruction::Migrate,
+        unispot_wormhole_attester::instruction::Instruction::Migrate,
         (),
     );
 
@@ -276,10 +276,10 @@ pub fn gen_migrate_tx(
 pub async fn get_config_account(
     rpc_client: &RpcClient,
     p2w_addr: &Pubkey,
-) -> Result<Pyth2WormholeConfig, ErrBox> {
+) -> Result<UniSpot2WormholeConfig, ErrBox> {
     let p2w_config_addr = P2WConfigAccount::<{ AccountState::Initialized }>::key(None, p2w_addr);
 
-    let config = Pyth2WormholeConfig::try_from_slice(
+    let config = UniSpot2WormholeConfig::try_from_slice(
         rpc_client
             .get_account_data(&p2w_config_addr)
             .await?
@@ -293,7 +293,7 @@ pub async fn get_config_account(
 /// call.
 pub fn gen_attest_tx(
     p2w_addr: Pubkey,
-    p2w_config: &Pyth2WormholeConfig, // Must be fresh, not retrieved inside to keep side effects away
+    p2w_config: &UniSpot2WormholeConfig, // Must be fresh, not retrieved inside to keep side effects away
     payer: &Keypair,
     wh_msg_id: u64,
     symbols: &[P2WSymbol],
@@ -356,7 +356,7 @@ pub fn gen_attest_tx(
 
     acc_metas.append(&mut padded_symbols);
 
-    // Continue with other pyth_wormhole_attester accounts
+    // Continue with other unispot_wormhole_attester accounts
     let mut acc_metas_remainder = vec![
         // clock
         AccountMeta::new_readonly(clock::id(), false),
@@ -391,7 +391,7 @@ pub fn gen_attest_tx(
     acc_metas.append(&mut acc_metas_remainder);
 
     let ix_data = (
-        pyth_wormhole_attester::instruction::Instruction::Attest,
+        unispot_wormhole_attester::instruction::Instruction::Attest,
         AttestData {
             consistency_level: ConsistencyLevel::Confirmed,
             message_account_id: wh_msg_id,
@@ -410,9 +410,9 @@ pub fn gen_attest_tx(
     Ok(tx_signed)
 }
 
-/// Enumerates all products and their prices in a Pyth mapping.
+/// Enumerates all products and their prices in a UniSpot mapping.
 /// Returns map of: product address => [price addresses]
-pub async fn crawl_pyth_mapping(
+pub async fn crawl_unispot_mapping(
     rpc_client: &RpcClient,
     first_mapping_addr: &Pubkey,
 ) -> Result<Vec<P2WProductAccount>, ErrBox> {
@@ -431,7 +431,7 @@ pub async fn crawl_pyth_mapping(
             Ok(p) => p,
             Err(e) => {
                 warn!(
-                    "Mapping: Could not parse account {} as a Pyth mapping, crawling terminated. Error: {:?}",
+                    "Mapping: Could not parse account {} as a UniSpot mapping, crawling terminated. Error: {:?}",
                     mapping_addr, e
                 );
                 break;
@@ -447,7 +447,7 @@ pub async fn crawl_pyth_mapping(
             let prod = match load_product_account(&prod_bytes) {
                 Ok(p) => p,
                 Err(e) => {
-                    warn!("Mapping {}: Could not parse account {} as a Pyth product, skipping to next product. Error: {:?}", mapping_addr, prod_addr, e);
+                    warn!("Mapping {}: Could not parse account {} as a UniSpot product, skipping to next product. Error: {:?}", mapping_addr, prod_addr, e);
                     continue;
                 }
             };
@@ -480,7 +480,7 @@ pub async fn crawl_pyth_mapping(
                 let price = match load_price_account(&price_bytes) {
                     Ok(p) => p,
                     Err(e) => {
-                        warn!("Product {}: Could not parse account {} as a Pyth price, skipping to next product. Error: {:?}", prod_addr, price_addr, e);
+                        warn!("Product {}: Could not parse account {} as a UniSpot price, skipping to next product. Error: {:?}", prod_addr, price_addr, e);
                         break;
                     }
                 };

@@ -4,7 +4,7 @@ use {
 };
 
 #[derive(Error, Debug)]
-pub enum PythContractError {
+pub enum UniSpotContractError {
     /// Message sender not permitted to execute this operation
     #[error("PermissionDenied")]
     PermissionDenied,
@@ -54,8 +54,8 @@ pub enum PythContractError {
     InvalidFeeDenom { denom: String },
 }
 
-impl From<PythContractError> for StdError {
-    fn from(other: PythContractError) -> StdError {
+impl From<UniSpotContractError> for StdError {
+    fn from(other: UniSpotContractError) -> StdError {
         StdError::GenericErr {
             msg: format!("{other}"),
         }

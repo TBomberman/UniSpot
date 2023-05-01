@@ -19,16 +19,16 @@ export type PriceFeedResponse = {
 };
 
 /**
- * `PythWrapperQuerier` wraps the ChainQuerier which can be a querier for any cosmwasm chain.
- * The ChainQuerier is contract independent, and it doesn't work with pyth specific objects which we know of.
+ * `UniSpotWrapperQuerier` wraps the ChainQuerier which can be a querier for any cosmwasm chain.
+ * The ChainQuerier is contract independent, and it doesn't work with unispot specific objects which we know of.
  *
- * `PythWrapperQuerier` uses the ChainQuerier to query Pyth contracts but it works with Pyth specific objects
+ * `UniSpotWrapperQuerier` uses the ChainQuerier to query UniSpot contracts but it works with UniSpot specific objects
  */
-export class PythWrapperQuerier {
+export class UniSpotWrapperQuerier {
   constructor(private chainQuerier: ChainQuerier) {}
 
   /**
-   * Get the fee required to update the Pyth on-chain contract with the given VAAs.
+   * Get the fee required to update the UniSpot on-chain contract with the given VAAs.
    * This function will invoke the corresponding function on the contract itself and
    * return the result. The result is represented as both a quantity of tokens and a
    * denomination which may vary depending on the chain being queried.
@@ -53,7 +53,7 @@ export class PythWrapperQuerier {
   }
 
   /**
-   * Get the price feed stored in the Pyth on-chain contract with the given id.
+   * Get the price feed stored in the UniSpot on-chain contract with the given id.
    * This function will invoke the corresponding function on the contract itself and
    * return the result.
    *
@@ -94,17 +94,17 @@ export type ExecuteGovernanceInstructionRequest = {
 };
 
 /**
- * `PythWrapperExecutor` wraps the ChainExecutor which can be a executor for any cosmwasm chain.
- * The ChainExecutor is contract independent, and it doesn't work with pyth specific objects which we know of.
+ * `UniSpotWrapperExecutor` wraps the ChainExecutor which can be a executor for any cosmwasm chain.
+ * The ChainExecutor is contract independent, and it doesn't work with unispot specific objects which we know of.
  *
- * `PythWrapperExecutor` uses the ChainExecutor to execute Pyth contracts but it works with Pyth specific objects
+ * `UniSpotWrapperExecutor` uses the ChainExecutor to execute UniSpot contracts but it works with UniSpot specific objects
  */
-export class PythWrapperExecutor {
+export class UniSpotWrapperExecutor {
   constructor(private chainExecutor: ChainExecutor) {}
 
   /**
-   * Update the price feed stored in Pyth Contracts on chain. This function will send an execute request
-   * to the Pyth contracts with the funds required to update a price feed.
+   * Update the price feed stored in UniSpot Contracts on chain. This function will send an execute request
+   * to the UniSpot contracts with the funds required to update a price feed.
    *
    * @param {ExecuteUpdatePriceFeedsRequest} req
    * @param {string} req.contractAddr
@@ -132,7 +132,7 @@ export class PythWrapperExecutor {
   }
 
   /**
-   * Execute the governance instruction on Pyth contracts on chain for the given VAA.
+   * Execute the governance instruction on UniSpot contracts on chain for the given VAA.
    *
    * @param {ExecuteGovernanceInstructionRequest} req
    * @param {string} req.contractAddr

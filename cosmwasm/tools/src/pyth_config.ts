@@ -1,6 +1,6 @@
 import { NETWORKS } from "./network";
 
-const PYTH_SOURCES_TESTNET = {
+const UNISPOT_SOURCES_TESTNET = {
   data_sources: [
     {
       emitter: Buffer.from(
@@ -26,7 +26,7 @@ const PYTH_SOURCES_TESTNET = {
   },
 };
 
-const PYTH_SOURCES_MAINNET = {
+const UNISPOT_SOURCES_MAINNET = {
   data_sources: [
     {
       emitter: Buffer.from(
@@ -52,7 +52,7 @@ const PYTH_SOURCES_MAINNET = {
   },
 };
 
-export type PythConfig = {
+export type UniSpotConfig = {
   wormhole_contract: string;
   data_sources: DataSource[];
   governance_source: DataSource;
@@ -73,7 +73,7 @@ export type Fee = {
   denom: string;
 };
 
-type Config = Record<NETWORKS, PythConfig>;
+type Config = Record<NETWORKS, UniSpotConfig>;
 
 export const CONFIG: Config = {
   [NETWORKS.TERRA_MAINNET]: {
@@ -87,7 +87,7 @@ export const CONFIG: Config = {
       amount: "1",
       denom: "uluna",
     },
-    ...PYTH_SOURCES_MAINNET,
+    ...UNISPOT_SOURCES_MAINNET,
   },
   [NETWORKS.TERRA_TESTNET]: {
     wormhole_contract:
@@ -100,7 +100,7 @@ export const CONFIG: Config = {
       amount: "1",
       denom: "uluna",
     },
-    ...PYTH_SOURCES_TESTNET,
+    ...UNISPOT_SOURCES_TESTNET,
   },
   [NETWORKS.TERRA_LOCAL]: {
     // random contract for local testing
@@ -115,7 +115,7 @@ export const CONFIG: Config = {
       denom: "uluna",
     },
     // invalid contract info for local testing
-    ...PYTH_SOURCES_TESTNET,
+    ...UNISPOT_SOURCES_TESTNET,
   },
   [NETWORKS.INJECTIVE_MAINNET]: {
     wormhole_contract: "inj17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9l2q74d",
@@ -127,7 +127,7 @@ export const CONFIG: Config = {
       amount: "1",
       denom: "inj",
     },
-    ...PYTH_SOURCES_MAINNET,
+    ...UNISPOT_SOURCES_MAINNET,
   },
   [NETWORKS.INJECTIVE_TESTNET]: {
     wormhole_contract: "inj1xx3aupmgv3ce537c0yce8zzd3sz567syuyedpg",
@@ -139,7 +139,7 @@ export const CONFIG: Config = {
       amount: "1",
       denom: "inj",
     },
-    ...PYTH_SOURCES_TESTNET,
+    ...UNISPOT_SOURCES_TESTNET,
   },
   [NETWORKS.OSMOSIS_TESTNET]: {
     wormhole_contract:
@@ -152,7 +152,7 @@ export const CONFIG: Config = {
       amount: "1",
       denom: "uosmo",
     },
-    ...PYTH_SOURCES_TESTNET,
+    ...UNISPOT_SOURCES_TESTNET,
   },
   // this details below are invalid and random
   // they are to be used only for for testing purposes
@@ -170,6 +170,6 @@ export const CONFIG: Config = {
     },
     // these are same as testnet but are being used in LocalOsmosis (local blockchain)
     // used only for development and testing purposes
-    ...PYTH_SOURCES_TESTNET,
+    ...UNISPOT_SOURCES_TESTNET,
   },
 };

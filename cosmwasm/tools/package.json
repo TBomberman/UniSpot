@@ -2,11 +2,11 @@
   "name": "tools",
   "version": "1.0.0",
   "description": "",
-  "main": "deploy-pyth-bridge.ts",
+  "main": "deploy-unispot-bridge.ts",
   "scripts": {
     "build": "tsc",
     "build-contract": "ts-node ./src/build-contract.ts",
-    "deploy-pyth": "ts-node ./src/deploy-pyth-bridge.ts",
+    "deploy-unispot": "ts-node ./src/deploy-unispot-bridge.ts",
     "deploy": "ts-node ./src/deploy.ts"
   },
   "author": "",

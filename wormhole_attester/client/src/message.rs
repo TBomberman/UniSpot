@@ -1,4 +1,4 @@
-//! Re-usable message scheme for pyth2wormhole
+//! Re-usable message scheme for unispot2wormhole
 
 use {
     crate::ErrBoxSend,

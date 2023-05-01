@@ -1,6 +1,6 @@
 use {
     crate::{
-        error::PythContractError,
+        error::UniSpotContractError,
         PriceFeed,
         PriceFeedResponse,
         PriceIdentifier,
@@ -23,17 +23,17 @@ use {
     },
 };
 
-/// Mock version of Pyth for testing cosmwasm contracts.
+/// Mock version of UniSpot for testing cosmwasm contracts.
 /// This mock stores some price feeds and responds to query messages.
 #[derive(Clone)]
-pub struct MockPyth {
+pub struct MockUniSpot {
     pub valid_time_period: Duration,
     pub fee_per_vaa:       Coin,
     pub feeds:             HashMap<PriceIdentifier, PriceFeed>,
 }
 
-impl MockPyth {
-    /// Create a new `MockPyth`. You can either provide the full list of price feeds up front,
+impl MockUniSpot {
+    /// Create a new `MockUniSpot`. You can either provide the full list of price feeds up front,
     /// or add them later via `add_feed`.
     pub fn new(valid_time_period: Duration, fee_per_vaa: Coin, feeds: &[PriceFeed]) -> Self {
         let mut feeds_map = HashMap::new();
@@ -41,7 +41,7 @@ impl MockPyth {
             feeds_map.insert(feed.id, *feed);
         }
 
-        MockPyth {
+        MockUniSpot {
             valid_time_period,
             fee_per_vaa,
             feeds: feeds_map,
@@ -55,7 +55,7 @@ impl MockPyth {
 
     /// Handler for processing query messages.
     /// See the tests in `contract.rs`
-    /// `https://github.com/pyth-network/pyth-crosschain/blob/main/target_chains/cosmwasm/examples/cw-contract/src/contract.rs#L13`
+    /// `https://github.com/unispot-network/unispot-crosschain/blob/main/target_chains/cosmwasm/examples/cw-contract/src/contract.rs#L13`
     /// for how to use this handler within your tests.
     pub fn handle_wasm_query(&self, msg: &Binary) -> QuerierResult {
         let query_msg = from_binary::<QueryMsg>(msg);
@@ -65,7 +65,7 @@ impl MockPyth {
                     SystemResult::Ok(to_binary(&PriceFeedResponse { price_feed: *feed }).into())
                 }
                 None => SystemResult::Ok(ContractResult::from(Err(
-                    PythContractError::PriceFeedNotFound,
+                    UniSpotContractError::PriceFeedNotFound,
                 ))),
             },
             Ok(QueryMsg::GetValidTimePeriod) => {

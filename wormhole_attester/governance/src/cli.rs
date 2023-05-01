@@ -10,7 +10,7 @@ use {
 #[derive(Parser, Debug)]
 #[clap(
     about = "A cli for the remote executor",
-    author = "Pyth Network Contributors"
+    author = "UniSpot Network Contributors"
 )]
 pub struct Cli {
     #[clap(subcommand)]
@@ -31,8 +31,8 @@ pub enum Action {
         new_owner:      Pubkey,
         #[clap(long, help = "Config : Wormhole program id")]
         wormhole:       Pubkey,
-        #[clap(long, help = "Config : Pyth program id")]
-        pyth_owner:     Pubkey,
+        #[clap(long, help = "Config : UniSpot program id")]
+        unispot_owner:     Pubkey,
         #[clap(long, help = "Config : Max batch size")]
         max_batch_size: u16,
         #[clap(long, help = "Config : Is active")]

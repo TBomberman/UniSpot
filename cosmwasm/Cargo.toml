@@ -1,5 +1,5 @@
 [workspace]
-members = ["contracts/pyth", "sdk/rust"]
+members = ["contracts/unispot", "sdk/rust"]
 exclude = ["examples/cw-contract"]
 
 [profile.release]

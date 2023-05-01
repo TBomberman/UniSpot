@@ -3,9 +3,9 @@
 use {
     crate::config::{
         OldP2WConfigAccount,
-        OldPyth2WormholeConfig,
+        OldUniSpot2WormholeConfig,
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
     solana_program::{
         program_error::ProgramError,
@@ -46,7 +46,7 @@ pub struct Migrate<'b> {
 }
 
 pub fn migrate(ctx: &ExecutionContext, accs: &mut Migrate, _data: ()) -> SoliResult<()> {
-    let old_config: &OldPyth2WormholeConfig = &accs.old_config.1;
+    let old_config: &OldUniSpot2WormholeConfig = &accs.old_config.1;
 
     if &old_config.owner != accs.current_owner.info().key {
         trace!(
@@ -70,7 +70,7 @@ pub fn migrate(ctx: &ExecutionContext, accs: &mut Migrate, _data: ()) -> SoliRes
     // Populate new config
     accs.new_config
         .create(ctx, accs.payer.info().key, CreationLamports::Exempt)?;
-    accs.new_config.1 = Pyth2WormholeConfig::from(old_config.clone());
+    accs.new_config.1 = UniSpot2WormholeConfig::from(old_config.clone());
 
     // Reclaim old config lamports
 

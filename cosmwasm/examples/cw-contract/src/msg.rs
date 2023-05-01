@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use cosmwasm_std::{Binary, Coin};
-use pyth_sdk_cw::{
+use unispot_sdk_cw::{
     Price,
     PriceIdentifier,
 };
@@ -17,7 +17,7 @@ pub struct MigrateMsg {}
 #[cw_serde]
 pub struct InstantiateMsg {
     pub price_feed_id:      PriceIdentifier,
-    pub pyth_contract_addr: String,
+    pub unispot_contract_addr: String,
 }
 
 #[cw_serde]

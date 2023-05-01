@@ -1,5 +1,5 @@
 use {
-    crate::state::PythDataSource,
+    crate::state::UniSpotDataSource,
     cosmwasm_schema::cw_serde,
     cosmwasm_std::Coin,
 };
@@ -13,9 +13,9 @@ type HumanAddr = String;
 #[cw_serde]
 pub struct InstantiateMsg {
     pub wormhole_contract: HumanAddr,
-    pub data_sources:      Vec<PythDataSource>,
+    pub data_sources:      Vec<UniSpotDataSource>,
 
-    pub governance_source:          PythDataSource,
+    pub governance_source:          UniSpotDataSource,
     pub governance_source_index:    u32,
     pub governance_sequence_number: u64,
 

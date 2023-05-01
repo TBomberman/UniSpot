@@ -18,9 +18,9 @@ const argv = yargs(hideBin(process.argv))
     type: "string",
     required: true,
   })
-  .option("pyth-contract", {
+  .option("unispot-contract", {
     description:
-      "Pyth contract address. You should provide this value if you are using localterra",
+      "UniSpot contract address. You should provide this value if you are using localterra",
     type: "string",
     required: false,
   })
@@ -56,23 +56,23 @@ const CONFIG: Record<string, any> = {
 export const TERRA_GAS_PRICES_URL = "https://fcd.terra.dev/v1/txs/gas_prices";
 
 let terraHost;
-let pythContractAddr: string;
+let unispotContractAddr: string;
 
 if (CONFIG[argv.network] !== undefined) {
   terraHost = CONFIG[argv.network].terraHost;
-  pythContractAddr = CONTRACT_ADDR[argv.network];
+  unispotContractAddr = CONTRACT_ADDR[argv.network];
 } else {
   terraHost = {
     URL: argv.network,
     chainID: "localterra",
     name: "localterra",
   };
-  if (argv.pythContract === undefined) {
+  if (argv.unispotContract === undefined) {
     throw new Error(
-      "You should provide pyth contract address when using localterra"
+      "You should provide unispot contract address when using localterra"
     );
   }
-  pythContractAddr = argv.pythContract;
+  unispotContractAddr = argv.unispotContract;
 }
 
 const feeDenoms = ["uluna"];
@@ -96,7 +96,7 @@ async function run() {
 
   const msgs = await connection.getPriceUpdateMessages(
     priceIds,
-    pythContractAddr,
+    unispotContractAddr,
     wallet.key.accAddress
   );
   console.log(msgs);

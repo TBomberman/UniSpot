@@ -52,7 +52,7 @@ function cargoPreSetup(contractTomlFilePath: string, feature: string) {
 }
 
 function build() {
-  const contractTomlFilePath = "../contracts/pyth/Cargo.toml";
+  const contractTomlFilePath = "../contracts/unispot/Cargo.toml";
 
   let cleanup = () => {};
   if (argv.cosmwasm !== true) {

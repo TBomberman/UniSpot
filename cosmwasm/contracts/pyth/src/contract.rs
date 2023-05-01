@@ -1,6 +1,6 @@
 #[cfg(feature = "injective")]
 use crate::injective::{
-    create_relay_pyth_prices_msg,
+    create_relay_unispot_prices_msg,
     InjectiveMsgWrapper as MsgWrapper,
 };
 #[cfg(not(feature = "injective"))]
@@ -32,7 +32,7 @@ use {
             price_feed_read_bucket,
             set_contract_version,
             ConfigInfo,
-            PythDataSource,
+            UniSpotDataSource,
         },
         wormhole::{
             ParsedVAA,
@@ -59,8 +59,8 @@ use {
         WasmMsg,
         WasmQuery,
     },
-    pyth_sdk_cw::{
-        error::PythContractError,
+    unispot_sdk_cw::{
+        error::UniSpotContractError,
         ExecuteMsg,
         Price,
         PriceFeed,
@@ -68,7 +68,7 @@ use {
         PriceIdentifier,
         QueryMsg,
     },
-    pyth_wormhole_attester_sdk::{
+    unispot_wormhole_attester_sdk::{
         BatchPriceAttestation,
         PriceAttestation,
         PriceStatus,
@@ -107,7 +107,7 @@ pub fn instantiate(
     _info: MessageInfo,
     msg: InstantiateMsg,
 ) -> StdResult<Response> {
-    // Save general wormhole and pyth info
+    // Save general wormhole and unispot info
     let state = ConfigInfo {
         wormhole_contract:          deps.api.addr_validate(msg.wormhole_contract.as_ref())?,
         data_sources:               msg.data_sources.iter().cloned().collect(),
@@ -207,7 +207,7 @@ fn is_fee_sufficient(deps: &Deps, info: MessageInfo, data: &[Binary]) -> StdResu
     let mut total_amount = 0u128;
     for coin in &info.funds {
         if coin.denom != state.fee.denom && !is_allowed_tx_fees_denom(deps, &coin.denom) {
-            return Err(PythContractError::InvalidFeeDenom {
+            return Err(UniSpotContractError::InvalidFeeDenom {
                 denom: coin.denom.to_string(),
             })?;
         }
@@ -243,7 +243,7 @@ fn update_price_feeds(
     let state = config_read(deps.storage).load()?;
 
     if !is_fee_sufficient(&deps.as_ref(), info, data)? {
-        return Err(PythContractError::InsufficientFee)?;
+        return Err(UniSpotContractError::InsufficientFee)?;
     }
 
     let mut num_total_attestations: usize = 0;
@@ -255,7 +255,7 @@ fn update_price_feeds(
 
         let data = &vaa.payload;
         let batch_attestation = BatchPriceAttestation::deserialize(&data[..])
-            .map_err(|_| PythContractError::InvalidUpdatePayload)?;
+            .map_err(|_| UniSpotContractError::InvalidUpdatePayload)?;
 
         let (num_attestations, new_attestations) =
             process_batch_attestation(&mut deps, &env, &batch_attestation)?;
@@ -272,7 +272,7 @@ fn update_price_feeds(
     #[cfg(feature = "injective")]
     {
         let inj_message =
-            create_relay_pyth_prices_msg(env.contract.address, total_new_attestations);
+            create_relay_unispot_prices_msg(env.contract.address, total_new_attestations);
         Ok(response
             .add_message(inj_message)
             .add_attribute("action", "update_price_feeds")
@@ -308,31 +308,31 @@ fn execute_governance_instruction(
     // Governance messages must be applied in order. This check prevents replay attacks where
     // previous messages are re-applied.
     if vaa.sequence <= state.governance_sequence_number {
-        return Err(PythContractError::OldGovernanceMessage)?;
+        return Err(UniSpotContractError::OldGovernanceMessage)?;
     } else {
         updated_config.governance_sequence_number = vaa.sequence;
     }
 
     let data = &vaa.payload;
     let instruction = GovernanceInstruction::deserialize(&data[..])
-        .map_err(|_| PythContractError::InvalidGovernancePayload)?;
+        .map_err(|_| UniSpotContractError::InvalidGovernancePayload)?;
 
     // Check that the instruction is intended for this chain.
     // chain_id = 0 means the instruction applies to all chains
     if instruction.target_chain_id != state.chain_id && instruction.target_chain_id != 0 {
-        return Err(PythContractError::InvalidGovernancePayload)?;
+        return Err(UniSpotContractError::InvalidGovernancePayload)?;
     }
 
     // Check that the instruction is intended for this target chain contract (as opposed to
-    // other Pyth contracts that may live on the same chain).
+    // other UniSpot contracts that may live on the same chain).
     if instruction.module != GovernanceModule::Target {
-        return Err(PythContractError::InvalidGovernancePayload)?;
+        return Err(UniSpotContractError::InvalidGovernancePayload)?;
     }
 
     let response = match instruction.action {
         UpgradeContract { code_id } => {
             if instruction.target_chain_id == 0 {
-                Err(PythContractError::InvalidGovernancePayload)?
+                Err(UniSpotContractError::InvalidGovernancePayload)?
             }
             upgrade_contract(&env.contract.address, code_id)?
         }
@@ -354,11 +354,11 @@ fn execute_governance_instruction(
                     10_u128
                         .checked_pow(
                             u32::try_from(expo)
-                                .map_err(|_| PythContractError::InvalidGovernancePayload)?,
+                                .map_err(|_| UniSpotContractError::InvalidGovernancePayload)?,
                         )
-                        .ok_or(PythContractError::InvalidGovernancePayload)?,
+                        .ok_or(UniSpotContractError::InvalidGovernancePayload)?,
                 )
-                .ok_or(PythContractError::InvalidGovernancePayload)?;
+                .ok_or(UniSpotContractError::InvalidGovernancePayload)?;
 
             updated_config.fee = Coin::new(new_fee_amount, updated_config.fee.denom.clone());
 
@@ -376,7 +376,7 @@ fn execute_governance_instruction(
         RequestGovernanceDataSourceTransfer { .. } => {
             // RequestGovernanceDataSourceTransfer can only be part of the
             // AuthorizeGovernanceDataSourceTransfer message.
-            Err(PythContractError::InvalidGovernancePayload)?
+            Err(UniSpotContractError::InvalidGovernancePayload)?
         }
     };
 
@@ -395,7 +395,7 @@ fn transfer_governance(
 ) -> StdResult<Response<MsgWrapper>> {
     let claim_vaa_instruction =
         GovernanceInstruction::deserialize(parsed_claim_vaa.payload.as_slice())
-            .map_err(|_| PythContractError::InvalidGovernancePayload)?;
+            .map_err(|_| UniSpotContractError::InvalidGovernancePayload)?;
 
     // Check that the requester is asking to govern this target chain contract.
     // chain_id == 0 means they're asking for governance of all target chain contracts.
@@ -404,7 +404,7 @@ fn transfer_governance(
     if claim_vaa_instruction.target_chain_id != current_config.chain_id
         && claim_vaa_instruction.target_chain_id != 0
     {
-        Err(PythContractError::InvalidGovernancePayload)?
+        Err(UniSpotContractError::InvalidGovernancePayload)?
     }
 
     match claim_vaa_instruction.action {
@@ -412,11 +412,11 @@ fn transfer_governance(
             governance_data_source_index,
         } => {
             if current_config.governance_source_index != governance_data_source_index - 1 {
-                Err(PythContractError::InvalidGovernanceSourceIndex)?
+                Err(UniSpotContractError::InvalidGovernanceSourceIndex)?
             }
 
             next_config.governance_source_index = governance_data_source_index;
-            let new_governance_source = PythDataSource {
+            let new_governance_source = UniSpotDataSource {
                 emitter:  Binary::from(parsed_claim_vaa.emitter_address.clone()),
                 chain_id: parsed_claim_vaa.emitter_chain,
             };
@@ -438,7 +438,7 @@ fn transfer_governance(
                     format!("{}", parsed_claim_vaa.sequence),
                 ))
         }
-        _ => Err(PythContractError::InvalidGovernancePayload)?,
+        _ => Err(UniSpotContractError::InvalidGovernancePayload)?,
     }
 }
 
@@ -458,24 +458,24 @@ fn upgrade_contract(address: &Addr, new_code_id: u64) -> StdResult<Response<MsgW
 
 /// Check that `vaa` is from a valid data source (and hence is a legitimate price update message).
 fn verify_vaa_from_data_source(state: &ConfigInfo, vaa: &ParsedVAA) -> StdResult<()> {
-    let vaa_data_source = PythDataSource {
+    let vaa_data_source = UniSpotDataSource {
         emitter:  vaa.emitter_address.clone().into(),
         chain_id: vaa.emitter_chain,
     };
     if !state.data_sources.contains(&vaa_data_source) {
-        return Err(PythContractError::InvalidUpdateEmitter)?;
+        return Err(UniSpotContractError::InvalidUpdateEmitter)?;
     }
     Ok(())
 }
 
 /// Check that `vaa` is from a valid governance source (and hence is a legitimate governance instruction).
 fn verify_vaa_from_governance_source(state: &ConfigInfo, vaa: &ParsedVAA) -> StdResult<()> {
-    let vaa_data_source = PythDataSource {
+    let vaa_data_source = UniSpotDataSource {
         emitter:  vaa.emitter_address.clone().into(),
         chain_id: vaa.emitter_chain,
     };
     if state.governance_source != vaa_data_source {
-        return Err(PythContractError::InvalidUpdateEmitter)?;
+        return Err(UniSpotContractError::InvalidUpdateEmitter)?;
     }
     Ok(())
 }
@@ -587,7 +587,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 pub fn query_price_feed(deps: &Deps, feed_id: &[u8]) -> StdResult<PriceFeedResponse> {
     match price_feed_read_bucket(deps.storage).load(feed_id) {
         Ok(price_feed) => Ok(PriceFeedResponse { price_feed }),
-        Err(_) => Err(PythContractError::PriceFeedNotFound)?,
+        Err(_) => Err(UniSpotContractError::PriceFeedNotFound)?,
     }
 }
 
@@ -621,7 +621,7 @@ pub fn get_update_fee_for_denom(deps: &Deps, vaas: &[Binary], denom: String) -> 
 
     // if the denom is not a base denom it should be an allowed one
     if denom != config.fee.denom && !is_allowed_tx_fees_denom(deps, &denom) {
-        return Err(PythContractError::InvalidFeeDenom { denom })?;
+        return Err(UniSpotContractError::InvalidFeeDenom { denom })?;
     }
 
     // the base fee is set to -> denom = base denom of a chain, amount = 1
@@ -679,9 +679,9 @@ mod test {
             SystemResult,
             Uint128,
         },
-        pyth_sdk::UnixTimestamp,
-        pyth_sdk_cw::PriceIdentifier,
-        pyth_wormhole_attester_sdk::PriceAttestation,
+        unispot_sdk::UnixTimestamp,
+        unispot_sdk_cw::PriceIdentifier,
+        unispot_wormhole_attester_sdk::PriceAttestation,
         std::time::Duration,
     };
 
@@ -790,7 +790,7 @@ mod test {
         ConfigInfo {
             wormhole_contract:          Addr::unchecked(String::default()),
             data_sources:               HashSet::default(),
-            governance_source:          PythDataSource {
+            governance_source:          UniSpotDataSource {
                 emitter:  Binary(vec![]),
                 chain_id: 0,
             },
@@ -818,12 +818,12 @@ mod test {
     }
 
     fn create_data_sources(
-        pyth_emitter: Vec<u8>,
-        pyth_emitter_chain: u16,
-    ) -> HashSet<PythDataSource> {
-        HashSet::from([PythDataSource {
-            emitter:  pyth_emitter.into(),
-            chain_id: pyth_emitter_chain,
+        unispot_emitter: Vec<u8>,
+        unispot_emitter_chain: u16,
+    ) -> HashSet<UniSpotDataSource> {
+        HashSet::from([UniSpotDataSource {
+            emitter:  unispot_emitter.into(),
+            chain_id: unispot_emitter_chain,
         }])
     }
 
@@ -855,7 +855,7 @@ mod test {
             // this is an example wormhole contract address in order to create a valid instantiate message
             wormhole_contract:          String::from("inj1xx3aupmgv3ce537c0yce8zzd3sz567syuyedpg"),
             data_sources:               Vec::new(),
-            governance_source:          PythDataSource {
+            governance_source:          UniSpotDataSource {
                 emitter:  Binary(vec![]),
                 chain_id: 0,
             },
@@ -893,7 +893,7 @@ mod test {
         let instantiate_msg = InstantiateMsg {
             wormhole_contract:          String::from(""),
             data_sources:               Vec::new(),
-            governance_source:          PythDataSource {
+            governance_source:          UniSpotDataSource {
                 emitter:  Binary(vec![]),
                 chain_id: 0,
             },
@@ -983,7 +983,7 @@ mod test {
         let result = is_fee_sufficient(&deps.as_ref(), info, &[data.clone()]);
         assert_eq!(
             result,
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
@@ -1006,7 +1006,7 @@ mod test {
     #[test]
     fn test_create_price_feed_from_price_attestation_status_trading() {
         let price_attestation = PriceAttestation {
-            price_id: pyth_wormhole_attester_sdk::Identifier::new([0u8; 32]),
+            price_id: unispot_wormhole_attester_sdk::Identifier::new([0u8; 32]),
             price: 100,
             conf: 100,
             expo: 100,
@@ -1055,7 +1055,7 @@ mod test {
 
     fn test_create_price_feed_from_price_attestation_not_trading(status: PriceStatus) {
         let price_attestation = PriceAttestation {
-            price_id: pyth_wormhole_attester_sdk::Identifier::new([0u8; 32]),
+            price_id: unispot_wormhole_attester_sdk::Identifier::new([0u8; 32]),
             price: 100,
             conf: 100,
             expo: 100,
@@ -1096,7 +1096,7 @@ mod test {
         let (mut deps, env) = setup_test();
 
         let price_attestation = PriceAttestation {
-            price_id: pyth_wormhole_attester_sdk::Identifier::new([0u8; 32]),
+            price_id: unispot_wormhole_attester_sdk::Identifier::new([0u8; 32]),
             price: 100,
             conf: 100,
             expo: 100,
@@ -1147,7 +1147,7 @@ mod test {
         let (mut deps, env) = setup_test();
 
         let price_attestation = PriceAttestation {
-            price_id: pyth_wormhole_attester_sdk::Identifier::new([0u8; 32]),
+            price_id: unispot_wormhole_attester_sdk::Identifier::new([0u8; 32]),
             price: 100,
             conf: 100,
             expo: 100,
@@ -1210,7 +1210,7 @@ mod test {
             EMITTER_CHAIN,
             &[],
         );
-        assert_eq!(result, Err(PythContractError::InvalidUpdateEmitter.into()));
+        assert_eq!(result, Err(UniSpotContractError::InvalidUpdateEmitter.into()));
     }
 
     #[test]
@@ -1221,7 +1221,7 @@ mod test {
             EMITTER_CHAIN + 1,
             &[],
         );
-        assert_eq!(result, Err(PythContractError::InvalidUpdateEmitter.into()));
+        assert_eq!(result, Err(UniSpotContractError::InvalidUpdateEmitter.into()));
     }
 
     #[test]
@@ -1329,7 +1329,7 @@ mod test {
 
         assert_eq!(
             query_price_feed(&deps.as_ref(), b"123".as_ref()),
-            Err(PythContractError::PriceFeedNotFound.into())
+            Err(UniSpotContractError::PriceFeedNotFound.into())
         );
     }
 
@@ -1421,21 +1421,21 @@ mod test {
         // test for invalid denom
         assert_eq!(
             get_update_fee_for_denom(&deps.as_ref(), &updates[0..0], "invalid_denom".to_string()),
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
         );
         assert_eq!(
             get_update_fee_for_denom(&deps.as_ref(), &updates[0..1], "invalid_denom".to_string()),
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
         );
         assert_eq!(
             get_update_fee_for_denom(&deps.as_ref(), &updates[0..2], "invalid_denom".to_string()),
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
@@ -1472,14 +1472,14 @@ mod test {
         // invalid
         assert_eq!(
             get_update_fee_for_denom(&deps.as_ref(), &updates[0..1], "invalid_denom".to_string()),
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
         );
         assert_eq!(
             get_update_fee_for_denom(&deps.as_ref(), &updates[0..2], "invalid_denom".to_string()),
-            Err(PythContractError::InvalidFeeDenom {
+            Err(UniSpotContractError::InvalidFeeDenom {
                 denom: "invalid_denom".to_string(),
             }
             .into())
@@ -1521,7 +1521,7 @@ mod test {
     fn governance_test_config() -> ConfigInfo {
         ConfigInfo {
             wormhole_contract: Addr::unchecked(WORMHOLE_ADDR),
-            governance_source: PythDataSource {
+            governance_source: UniSpotDataSource {
                 emitter:  Binary(vec![1u8, 2u8]),
                 chain_id: 3,
             },
@@ -1604,7 +1604,7 @@ mod test {
 
     #[test]
     fn test_authorize_governance_transfer_success() {
-        let source_2 = PythDataSource {
+        let source_2 = UniSpotDataSource {
             emitter:  Binary::from([2u8; 32]),
             chain_id: 4,
         };
@@ -1642,7 +1642,7 @@ mod test {
 
     #[test]
     fn test_authorize_governance_transfer_bad_source_index() {
-        let source_2 = PythDataSource {
+        let source_2 = UniSpotDataSource {
             emitter:  Binary::from([2u8; 32]),
             chain_id: 4,
         };
@@ -1675,13 +1675,13 @@ mod test {
         let test_vaa = governance_vaa(&test_instruction);
         assert_eq!(
             apply_governance_vaa(&test_config, &test_vaa),
-            Err(PythContractError::InvalidGovernanceSourceIndex.into())
+            Err(UniSpotContractError::InvalidGovernanceSourceIndex.into())
         );
     }
 
     #[test]
     fn test_authorize_governance_transfer_bad_target_chain() {
-        let source_2 = PythDataSource {
+        let source_2 = UniSpotDataSource {
             emitter:  Binary::from([2u8; 32]),
             chain_id: 4,
         };
@@ -1713,21 +1713,21 @@ mod test {
         let test_vaa = governance_vaa(&test_instruction);
         assert_eq!(
             apply_governance_vaa(&test_config, &test_vaa),
-            Err(PythContractError::InvalidGovernancePayload.into())
+            Err(UniSpotContractError::InvalidGovernancePayload.into())
         );
     }
 
     #[test]
     fn test_set_data_sources() {
-        let source_1 = PythDataSource {
+        let source_1 = UniSpotDataSource {
             emitter:  Binary::from([1u8; 32]),
             chain_id: 2,
         };
-        let source_2 = PythDataSource {
+        let source_2 = UniSpotDataSource {
             emitter:  Binary::from([2u8; 32]),
             chain_id: 4,
         };
-        let source_3 = PythDataSource {
+        let source_3 = UniSpotDataSource {
             emitter:  Binary::from([3u8; 32]),
             chain_id: 6,
         };

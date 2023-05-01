@@ -1,15 +1,15 @@
-# Pyth Cosmwasm
+# UniSpot Cosmwasm
 
 This crate includes the actual contract for the CosmWasm ecosystem.
 
 ## Integration
 
-You can use `pyth-sdk-cw` which has been published to crates.io to integrate with the Pyth contract.
-The sdk exposes data structures and testing utilities for ease of use. Please look into this [pyth-sdk-cw](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/cosmwasm/sdk/rust)
+You can use `unispot-sdk-cw` which has been published to crates.io to integrate with the UniSpot contract.
+The sdk exposes data structures and testing utilities for ease of use. Please look into this [unispot-sdk-cw](https://github.com/unispot-network/unispot-crosschain/tree/main/target_chains/cosmwasm/sdk/rust)
 
 ## Off-Chain Queries
 
-You can use the provided schemas in the `./pyth/schema` directory to directly query the CosmWasm contract from off-chain applications.
+You can use the provided schemas in the `./unispot/schema` directory to directly query the CosmWasm contract from off-chain applications.
 A typical query requires to pass the price feed id as a hex string. it will look like:
 
 ```
@@ -22,7 +22,7 @@ A typical query requires to pass the price feed id as a hex string. it will look
 
 ## Contracts and Price Feeds
 
-Pyth is currently available on the following cosmwasm chains:
+UniSpot is currently available on the following cosmwasm chains:
 
 ### Testnet
 
@@ -36,9 +36,9 @@ Available price feeds on these networks can be find below:
 
 | Network           | Available Price Feeds                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Injective Testnet | [https://pyth.network/developers/price-feed-ids#injective-testnet](https://pyth.network/developers/price-feed-ids#injective-testnet) |
+| Injective Testnet | [https://unispot.network/developers/price-feed-ids#injective-testnet](https://unispot.network/developers/price-feed-ids#injective-testnet) |
 
 ## Developing
 
-The cosmwasm contract lives in the `pyth` subdirectory.
+The cosmwasm contract lives in the `unispot` subdirectory.
 From that directory, you can build the contract with `cargo build` and run unit tests with `cargo test`.

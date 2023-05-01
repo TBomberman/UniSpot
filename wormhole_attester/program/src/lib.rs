@@ -17,7 +17,7 @@ pub use {
         Attest,
         AttestData,
     },
-    config::Pyth2WormholeConfig,
+    config::UniSpot2WormholeConfig,
     initialize::{
         initialize,
         Initialize,
@@ -26,7 +26,7 @@ pub use {
         migrate,
         Migrate,
     },
-    pyth_client,
+    unispot_client,
     set_config::{
         set_config,
         SetConfig,

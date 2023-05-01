@@ -137,7 +137,7 @@ export class InjectiveDeployer implements Deployer {
     }
 
     console.log(
-      `Instantiated Pyth at ${address} (${convert_injective_address_to_hex(
+      `Instantiated UniSpot at ${address} (${convert_injective_address_to_hex(
         address
       )})`
     );

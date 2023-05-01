@@ -15,8 +15,8 @@ use {
 
 #[derive(Parser)]
 #[clap(
-    about = "A client for the pyth2wormhole Solana program",
-    author = "Pyth Network Contributors"
+    about = "A client for the unispot2wormhole Solana program",
+    author = "UniSpot Network Contributors"
 )]
 pub struct Cli {
     #[clap(
@@ -37,15 +37,15 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Action {
-    #[clap(about = "Initialize a pyth2wormhole program freshly deployed under <p2w_addr>")]
+    #[clap(about = "Initialize a unispot2wormhole program freshly deployed under <p2w_addr>")]
     Init {
         /// The bridge program account
         #[clap(short = 'w', long = "wh-prog")]
         wh_prog:         Pubkey,
         #[clap(short = 'o', long = "owner")]
         owner_addr:      Pubkey,
-        #[clap(short = 'p', long = "pyth-owner")]
-        pyth_owner_addr: Pubkey,
+        #[clap(short = 'p', long = "unispot-owner")]
+        unispot_owner_addr: Pubkey,
         /// Option<> makes sure not specifying this flag does not imply "false"
         #[clap(long = "is-active")]
         is_active:       Option<bool>,
@@ -53,7 +53,7 @@ pub enum Action {
         ops_owner_addr:  Option<Pubkey>,
     },
     #[clap(
-        about = "Use an existing pyth2wormhole program to attest product price information to another chain"
+        about = "Use an existing unispot2wormhole program to attest product price information to another chain"
     )]
     // Note: defaults target SOL mainnet-beta conditions at implementation time
     Attest {
@@ -74,9 +74,9 @@ pub enum Action {
         )]
         metrics_bind_addr:         SocketAddr,
     },
-    #[clap(about = "Retrieve a pyth2wormhole program's current settings")]
+    #[clap(about = "Retrieve a unispot2wormhole program's current settings")]
     GetConfig,
-    #[clap(about = "Update an existing pyth2wormhole program's settings")]
+    #[clap(about = "Update an existing unispot2wormhole program's settings")]
     SetConfig {
         /// Current owner keypair path
         #[clap(
@@ -90,8 +90,8 @@ pub enum Action {
         new_owner_addr:      Option<Pubkey>,
         #[clap(long = "new-wh-prog")]
         new_wh_prog:         Option<Pubkey>,
-        #[clap(long = "new-pyth-owner")]
-        new_pyth_owner_addr: Option<Pubkey>,
+        #[clap(long = "new-unispot-owner")]
+        new_unispot_owner_addr: Option<Pubkey>,
         #[clap(long = "is-active")]
         is_active:           Option<bool>,
         #[clap(long = "ops-owner")]
@@ -100,7 +100,7 @@ pub enum Action {
         remove_ops_owner:    bool,
     },
     #[clap(
-        about = "Migrate existing pyth2wormhole program settings to a newer format version. Client version must match the deployed contract."
+        about = "Migrate existing unispot2wormhole program settings to a newer format version. Client version must match the deployed contract."
     )]
     Migrate {
         /// owner keypair path
@@ -111,7 +111,7 @@ pub enum Action {
         )]
         owner: String,
     },
-    #[clap(about = "Print out emitter address for the specified pyth2wormhole contract")]
+    #[clap(about = "Print out emitter address for the specified unispot2wormhole contract")]
     GetEmitter,
     #[clap(about = "Set the value of is_active config as ops_owner")]
     SetIsActive {

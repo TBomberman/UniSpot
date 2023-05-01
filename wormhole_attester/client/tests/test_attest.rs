@@ -8,13 +8,13 @@ use {
     },
     fixtures::{
         passthrough,
-        pyth,
+        unispot,
     },
-    pyth_wormhole_attester::config::{
+    unispot_wormhole_attester::config::{
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
-    pyth_wormhole_attester_client as p2wc,
+    unispot_wormhole_attester_client as p2wc,
     solana_program_test::*,
     solana_sdk::{
         account::Account,
@@ -36,15 +36,15 @@ async fn test_happy_path() -> Result<(), p2wc::ErrBoxSend> {
 
     // Authorities
     let p2w_owner = Pubkey::new_unique();
-    let pyth_owner = Pubkey::new_unique();
+    let unispot_owner = Pubkey::new_unique();
     let ops_owner = Pubkey::new_unique();
 
     // On-chain state
-    let p2w_config = Pyth2WormholeConfig {
+    let p2w_config = UniSpot2WormholeConfig {
         owner: p2w_owner,
         wh_prog: wh_fixture_program_id,
-        max_batch_size: pyth_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
-        pyth_owner,
+        max_batch_size: unispot_wormhole_attester::attest::P2W_MAX_BATCH_SIZE,
+        unispot_owner,
         is_active: true,
         ops_owner: Some(ops_owner),
     };
@@ -59,9 +59,9 @@ async fn test_happy_path() -> Result<(), p2wc::ErrBoxSend> {
 
     // Populate test environment
     let mut p2w_test = ProgramTest::new(
-        "pyth_wormhole_attester",
+        "unispot_wormhole_attester",
         p2w_program_id,
-        processor!(pyth_wormhole_attester::instruction::solitaire),
+        processor!(unispot_wormhole_attester::instruction::solitaire),
     );
 
     // Plant a filled config account
@@ -94,7 +94,7 @@ async fn test_happy_path() -> Result<(), p2wc::ErrBoxSend> {
     p2w_test.add_account(wh_bridge_config_addr, wh_bridge_config_account);
 
     passthrough::add_passthrough(&mut p2w_test, "wormhole", wh_fixture_program_id);
-    let (prod_id, price_id) = pyth::add_test_symbol(&mut p2w_test, &pyth_owner);
+    let (prod_id, price_id) = unispot::add_test_symbol(&mut p2w_test, &unispot_owner);
 
     let ctx = p2w_test.start_with_context().await;
 

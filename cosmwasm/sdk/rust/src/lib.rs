@@ -1,7 +1,7 @@
 pub mod error;
 pub mod testing;
 
-pub use pyth_sdk::{
+pub use unispot_sdk::{
     Price,
     PriceFeed,
     PriceIdentifier,

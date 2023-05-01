@@ -2626,13 +2626,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "106dd99e98437432fed6519dedecfade6a06a73bb7b2a1e019fdd2bee5778d94"
 
 [[package]]
-name = "pyth-client"
+name = "unispot-client"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44de48029c54ec1ca570786b5baeb906b0fc2409c8e0145585e287ee7a526c72"
 
 [[package]]
-name = "pyth-sdk"
+name = "unispot-sdk"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f5c805ba3dfb5b7ed6a8ffa62ec38391f485a79c7cf6b3b11d3bd44fb0325824"
@@ -2645,7 +2645,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pyth-sdk"
+name = "unispot-sdk"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a993cc2b76d9842ee92f00d3104a67d403e8a5a745d2474caf42361b3fc815a"
@@ -2658,7 +2658,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pyth-sdk-solana"
+name = "unispot-sdk-solana"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "286f2abd9fb718190206340f3d1f98a80b34df9d724887b907e7f6f24a31efce"
@@ -2668,14 +2668,14 @@ dependencies = [
  "bytemuck",
  "num-derive",
  "num-traits",
- "pyth-sdk 0.5.0",
+ "unispot-sdk 0.5.0",
  "serde",
  "solana-program",
  "thiserror",
 ]
 
 [[package]]
-name = "pyth-sdk-solana"
+name = "unispot-sdk-solana"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97f071fdeb5129de07a2cb70bb4f3a9e4be1e4cc6b85132bdea0967e601eb757"
@@ -2685,20 +2685,20 @@ dependencies = [
  "bytemuck",
  "num-derive",
  "num-traits",
- "pyth-sdk 0.6.1",
+ "unispot-sdk 0.6.1",
  "serde",
  "solana-program",
  "thiserror",
 ]
 
 [[package]]
-name = "pyth-wormhole-attester"
+name = "unispot-wormhole-attester"
 version = "2.0.1"
 dependencies = [
  "borsh",
- "pyth-client",
- "pyth-sdk-solana 0.5.0",
- "pyth-wormhole-attester-sdk",
+ "unispot-client",
+ "unispot-sdk-solana 0.5.0",
+ "unispot-wormhole-attester-sdk",
  "rocksalt",
  "serde",
  "serde_derive",
@@ -2709,7 +2709,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pyth-wormhole-attester-client"
+name = "unispot-wormhole-attester-client"
 version = "5.0.0"
 dependencies = [
  "borsh",
@@ -2721,9 +2721,9 @@ dependencies = [
  "lazy_static",
  "log",
  "prometheus",
- "pyth-sdk-solana 0.6.1",
- "pyth-wormhole-attester",
- "pyth-wormhole-attester-sdk",
+ "unispot-sdk-solana 0.6.1",
+ "unispot-wormhole-attester",
+ "unispot-wormhole-attester-sdk",
  "serde",
  "serde_yaml",
  "serial_test",
@@ -2741,25 +2741,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "pyth-wormhole-attester-governance"
+name = "unispot-wormhole-attester-governance"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "borsh",
  "clap 3.1.18",
  "hex",
- "pyth-wormhole-attester-client",
+ "unispot-wormhole-attester-client",
  "remote-executor",
  "solana-sdk",
 ]
 
 [[package]]
-name = "pyth-wormhole-attester-sdk"
+name = "unispot-wormhole-attester-sdk"
 version = "0.1.2"
 dependencies = [
  "hex",
- "pyth-sdk 0.5.0",
- "pyth-sdk-solana 0.5.0",
+ "unispot-sdk 0.5.0",
+ "unispot-sdk-solana 0.5.0",
  "serde",
  "solana-program",
  "solitaire",

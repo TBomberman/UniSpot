@@ -27,7 +27,7 @@ use {
     },
 };
 
-/// Pyth2wormhole config specific to attestation requests
+/// UniSpot2wormhole config specific to attestation requests
 #[derive(Clone, Debug, Hash, Deserialize, Serialize, PartialEq, Eq)]
 pub struct AttestationConfig {
     #[serde(default = "default_min_msg_reuse_interval_ms")]
@@ -43,7 +43,7 @@ pub struct AttestationConfig {
     #[serde(default = "default_enable_healthcheck")]
     pub enable_healthcheck: bool,
 
-    /// Optionally, we take a mapping account to add remaining symbols from a Pyth deployments.
+    /// Optionally, we take a mapping account to add remaining symbols from a UniSpot deployments.
     /// These symbols are processed under `default_attestation_conditions`.
     #[serde(
         deserialize_with = "opt_pubkey_string_de",

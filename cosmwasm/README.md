@@ -1,6 +1,6 @@
-# Pyth CosmWasm
+# UniSpot CosmWasm
 
-This directory contains the Pyth contract for CosmWasm and utilities to deploy it on CosmWasm chains.
+This directory contains the UniSpot contract for CosmWasm and utilities to deploy it on CosmWasm chains.
 
 ## Deployment
 
@@ -29,27 +29,27 @@ npm run build-contract -- --injective
 npm run build-contract -- --cosmwasm
 ```
 
-This command will build and save the Pyth contract in the `artifacts` directory.
+This command will build and save the UniSpot contract in the `artifacts` directory.
 
-Then, to deploy the Pyth contract (`pyth_cosmwasm.wasm`), run the following command in the `tools` directory:
+Then, to deploy the UniSpot contract (`unispot_cosmwasm.wasm`), run the following command in the `tools` directory:
 
 ```sh
 npm ci # Do it only once to install the required packages
-npm run deploy-pyth -- deploy-artifact --network osmosis_local --mnemonic "online prefer ..." --artifact "../artifacts/pyth_cosmwasm.wasm"
+npm run deploy-unispot -- deploy-artifact --network osmosis_local --mnemonic "online prefer ..." --artifact "../artifacts/unispot_cosmwasm.wasm"
 ```
 
 If successful, this command will print something along the lines of:
 
 ```sh
 Deploying artifact
-Storing WASM: ../artifacts/pyth_cosmwasm.wasm (230813 bytes)
+Storing WASM: ../artifacts/unispot_cosmwasm.wasm (230813 bytes)
 Broadcasted transaction hash: "BBD2E5DF5046B24287E63C53852D251D4F7DDD7755E663C9EB67A9B5560DFE4C"
 Deployed Code ID:  11
 ```
 
 ### Instantiating new contract
 
-Pyth contract needs the Wormhole core contract deployed on the same chain. Some chains won't have it deployed.
+UniSpot contract needs the Wormhole core contract deployed on the same chain. Some chains won't have it deployed.
 In that case, you have to deploy wormhole contract yourself. You can build the contract using the scripts given in `wormhole-stub`.
 Run and you will get the compiled contract code in `wormhole-stub/artifacts`
 
@@ -57,10 +57,10 @@ Run and you will get the compiled contract code in `wormhole-stub/artifacts`
 ./build.sh
 ```
 
-This command will upload the code and instantiates a new Pyth contract with the given code id:
+This command will upload the code and instantiates a new UniSpot contract with the given code id:
 
 ```sh
-npm run deploy-pyth -- instantiate --network osmosis_local --code-id 10 --mnemonic "online prefer ..."
+npm run deploy-unispot -- instantiate --network osmosis_local --code-id 10 --mnemonic "online prefer ..."
 ```
 
 If successful, the output should look like so:
@@ -68,8 +68,8 @@ If successful, the output should look like so:
 ```
 Instantiating a contract
 Broadcasted transaction hash: "5F9689ACEB5A57868F9B305A211962DEA826B1C47900904D39D61449A095ADE1"
-Instantiated pyth at osmo1hzz0s0ucrhdp6tue2lxk3c03nj6f60qy463we7lgx0wudd72ctms64096d (0xb884f83f981dda1d2f9957cd68e1f19cb49d3c04aea2ecfbe833ddc6b7cac2f7)
-Deployed Pyth contract at osmo1hzz0s0ucrhdp6tue2lxk3c03nj6f60qy463we7lgx0wudd72ctms64096d
+Instantiated unispot at osmo1hzz0s0ucrhdp6tue2lxk3c03nj6f60qy463we7lgx0wudd72ctms64096d (0xb884f83f981dda1d2f9957cd68e1f19cb49d3c04aea2ecfbe833ddc6b7cac2f7)
+Deployed UniSpot contract at osmo1hzz0s0ucrhdp6tue2lxk3c03nj6f60qy463we7lgx0wudd72ctms64096d
 ```
 
 ### Migrating existing contract
@@ -78,7 +78,7 @@ If you want to upgrade an existing contract pass use the `migrate` command as fo
 This command will upload the code, and with the given code id, will migrate the existing contract to the new one:
 
 ```sh
-npm run deploy-pyth -- migrate --network osmosis_local --code-id 9 --contract osmo1.. --mnemonic "online prefer ..."
+npm run deploy-unispot -- migrate --network osmosis_local --code-id 9 --contract osmo1.. --mnemonic "online prefer ..."
 ```
 
 If successful, the output should look like so:
@@ -91,10 +91,10 @@ Contract osmo1hzz0s0ucrhdp6tue2lxk3c03nj6f60qy463we7lgx0wudd72ctms64096d code_id
 
 ### Updating contract's admin
 
-Pyth contracts are owner of their own. To update a smart contract's admin use the following command.
+UniSpot contracts are owner of their own. To update a smart contract's admin use the following command.
 
 ```sh
-npm run deploy-pyth -- update-admin --network osmosis_local --new-admin osmo1.. --contract osmo1... --mnemonic "online prefer ..."
+npm run deploy-unispot -- update-admin --network osmosis_local --new-admin osmo1.. --contract osmo1... --mnemonic "online prefer ..."
 ```
 
 The output should be like.
@@ -117,7 +117,7 @@ Contract's admin successfully updates
 If you want to check a contract details, use the following command.
 
 ```sh
-npm run deploy-pyth -- get-contract-info --network osmosis_local --contract osmo1... --mnemonic "online prefer ..."
+npm run deploy-unispot -- get-contract-info --network osmosis_local --contract osmo1... --mnemonic "online prefer ..."
 ```
 
 The output should be like:

@@ -1,12 +1,12 @@
 [package]
-name = "pyth-wormhole-attester"
+name = "unispot-wormhole-attester"
 version = "2.0.1"
-description = "Pyth-over-Wormhole Solana contract"
+description = "UniSpot-over-Wormhole Solana contract"
 edition = "2018"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "pyth_wormhole_attester"
+name = "unispot_wormhole_attester"
 
 [features]
 default = ["wormhole-bridge-solana/no-entrypoint"]
@@ -20,9 +20,9 @@ solitaire = { git = "https://github.com/wormhole-foundation/wormhole", tag = "v2
 rocksalt = { git = "https://github.com/wormhole-foundation/wormhole", tag = "v2.14.8"}
 solana-program = "=1.10.31"
 borsh = "=0.9.3"
-pyth-client = "0.2.2"
-pyth-wormhole-attester-sdk = { path = "../sdk/rust", features = ["solana"] }
+unispot-client = "0.2.2"
+unispot-wormhole-attester-sdk = { path = "../sdk/rust", features = ["solana"] }
 serde = { version = "1", optional = true}
 serde_derive = { version = "1", optional = true}
 serde_json = { version = "1", optional = true}
-pyth-sdk-solana = { version = "0.5.0" }
+unispot-sdk-solana = { version = "0.5.0" }

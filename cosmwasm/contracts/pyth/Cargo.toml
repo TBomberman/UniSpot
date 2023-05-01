@@ -1,9 +1,9 @@
 [package]
-name = "pyth-cosmwasm"
+name = "unispot-cosmwasm"
 version = "1.2.0"
 authors = ["Wormhole Contributors <contact@certus.one>"]
 edition = "2018"
-description = "Pyth price receiver"
+description = "UniSpot price receiver"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -17,7 +17,7 @@ backtraces = ["cosmwasm-std/backtraces"]
 # use library feature to disable all init/handle/query exports
 library = []
 injective = ["dep:serde_repr"]
-osmosis=["pyth-sdk-cw/osmosis"]
+osmosis=["unispot-sdk-cw/osmosis"]
 
 [dependencies]
 cosmwasm-std = { version = "1.0.0" }
@@ -33,12 +33,12 @@ generic-array = { version = "0.14.4" }
 hex = "0.4.2"
 lazy_static = "1.4.0"
 bigint = "4"
-pyth-wormhole-attester-sdk = { path = "../../../wormhole_attester/sdk/rust" }
-pyth-sdk = "0.7.0"
+unispot-wormhole-attester-sdk = { path = "../../../wormhole_attester/sdk/rust" }
+unispot-sdk = "0.7.0"
 byteorder = "1.4.3"
 cosmwasm-schema = "1.1.9"
 osmosis-std = "0.15.2"
-pyth-sdk-cw = { path = "../../sdk/rust" }
+unispot-sdk-cw = { path = "../../sdk/rust" }
 
 [dev-dependencies]
 cosmwasm-vm = { version = "1.0.0", default-features = false }

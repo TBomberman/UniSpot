@@ -1,7 +1,7 @@
 use {
     crate::config::{
         P2WConfigAccount,
-        Pyth2WormholeConfig,
+        UniSpot2WormholeConfig,
     },
     borsh::BorshSerialize,
     solana_program::{
@@ -37,13 +37,13 @@ pub struct SetConfig<'b> {
     pub system_program: Info<'b>,
 }
 
-/// Alters the current settings of pyth2wormhole
+/// Alters the current settings of unispot2wormhole
 pub fn set_config(
     ctx: &ExecutionContext,
     accs: &mut SetConfig,
-    data: Pyth2WormholeConfig,
+    data: UniSpot2WormholeConfig,
 ) -> SoliResult<()> {
-    let cfg_struct: &Pyth2WormholeConfig = &accs.config; // unpack Data via nested Deref impls
+    let cfg_struct: &UniSpot2WormholeConfig = &accs.config; // unpack Data via nested Deref impls
     if &cfg_struct.owner != accs.current_owner.info().key {
         trace!(
             "Current owner account mismatch (expected {:?})",

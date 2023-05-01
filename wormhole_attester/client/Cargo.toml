@@ -1,12 +1,12 @@
 [package]
-name = "pyth-wormhole-attester-client"
+name = "unispot-wormhole-attester-client"
 version = "5.0.0"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "pyth_wormhole_attester_client"
+name = "unispot_wormhole_attester_client"
 
 [[bin]]
 name = "pwhac"
@@ -14,7 +14,7 @@ path = "src/main.rs"
 
 
 [features]
-default = ["pyth-wormhole-attester/client", "wormhole-bridge-solana/client", "pyth-wormhole-attester/trace"]
+default = ["unispot-wormhole-attester/client", "wormhole-bridge-solana/client", "unispot-wormhole-attester/trace"]
 
 [dependencies]
 borsh = "=0.9.3"
@@ -22,9 +22,9 @@ clap = {version = "3.1.18", features = ["derive"]}
 env_logger = "0.8.4"
 log = "0.4.14"
 wormhole-bridge-solana = {git = "https://github.com/wormhole-foundation/wormhole", tag = "v2.14.8"}
-pyth-wormhole-attester = {path = "../program"}
-pyth-wormhole-attester-sdk = { path = "../sdk/rust", features=["solana"] }
-pyth-sdk-solana = "0.6.1"
+unispot-wormhole-attester = {path = "../program"}
+unispot-wormhole-attester-sdk = { path = "../sdk/rust", features=["solana"] }
+unispot-sdk-solana = "0.6.1"
 serde = "1"
 serde_yaml = "0.8"
 shellexpand = "2.1.0"

@@ -2,7 +2,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { Deployer, DeployerFactory } from "./deployer";
 import { NETWORKS, NETWORKS_OPTIONS } from "./network";
-import { CONFIG as PythConfig } from "./pyth_config";
+import { CONFIG as UniSpotConfig } from "./unispot_config";
 import { CONFIG as NetworkConfig } from "./deployer/config";
 
 const sharedOptions: { [key: string]: yargs.Options } = {
@@ -19,7 +19,7 @@ const sharedOptions: { [key: string]: yargs.Options } = {
 };
 
 const argv = yargs(hideBin(process.argv))
-  .usage("USAGE: npm run deploy-pyth -- <command>")
+  .usage("USAGE: npm run deploy-unispot -- <command>")
   .command(
     "deploy-artifact",
     "to deploy artifacts (.wasm files)",
@@ -34,7 +34,7 @@ const argv = yargs(hideBin(process.argv))
     deployArtifactHandler
   )
   .example(
-    'npm run deploy-pyth -- deploy-artifact --network osmosis_local --mnemonic "online prefer ..." --artifact "../artifacts/pyth_cosmwasm.wasm"',
+    'npm run deploy-unispot -- deploy-artifact --network osmosis_local --mnemonic "online prefer ..." --artifact "../artifacts/unispot_cosmwasm.wasm"',
     ""
   )
   .command(
@@ -51,7 +51,7 @@ const argv = yargs(hideBin(process.argv))
     instantiateHandler
   )
   .example(
-    'npm run deploy-pyth -- instantiate --network osmosis_local --code-id 10 --mnemonic "online prefer ..."',
+    'npm run deploy-unispot -- instantiate --network osmosis_local --code-id 10 --mnemonic "online prefer ..."',
     ""
   )
   .command(
@@ -73,7 +73,7 @@ const argv = yargs(hideBin(process.argv))
     migrateHandler
   )
   .example(
-    'npm run deploy-pyth -- migrate --network osmosis_local --code-id 9 --contract osmo1.. --mnemonic "online prefer ..."',
+    'npm run deploy-unispot -- migrate --network osmosis_local --code-id 9 --contract osmo1.. --mnemonic "online prefer ..."',
     ""
   )
   .command(
@@ -95,7 +95,7 @@ const argv = yargs(hideBin(process.argv))
     updateAdminHandler
   )
   .example(
-    'npm run deploy-pyth -- update-admin --network osmosis_local --new-admin osmo1.. --contract osmo1... --mnemonic "online prefer ..."',
+    'npm run deploy-unispot -- update-admin --network osmosis_local --new-admin osmo1.. --contract osmo1... --mnemonic "online prefer ..."',
     ""
   )
   .command(
@@ -112,7 +112,7 @@ const argv = yargs(hideBin(process.argv))
     getContractInfoHandler
   )
   .example(
-    'npm run deploy-pyth -- get-contract-info --network osmosis_local --contract osmo1... --mnemonic "online prefer ..."',
+    'npm run deploy-unispot -- get-contract-info --network osmosis_local --contract osmo1... --mnemonic "online prefer ..."',
     ""
   )
   .demandCommand()
@@ -138,13 +138,13 @@ async function deployArtifactHandler(argv: any) {
 
 async function instantiateHandler(argv: any) {
   const { network, mnemonic, codeId } = argv;
-  const pythConfig = PythConfig[network as NETWORKS];
+  const unispotConfig = UniSpotConfig[network as NETWORKS];
   console.log("Instantiating a contract");
   const contractAddress = await getDeployer(
     network as NETWORKS,
     mnemonic as string
-  ).instantiate(codeId, pythConfig, "pyth");
-  console.log(`Deployed Pyth contract at ${contractAddress}`);
+  ).instantiate(codeId, unispotConfig, "unispot");
+  console.log(`Deployed UniSpot contract at ${contractAddress}`);
 }
 
 async function migrateHandler(argv: any) {

@@ -16,8 +16,8 @@ use {
         accounts::BridgeData,
         types::ConsistencyLevel,
     },
-    pyth_sdk_solana::state::PriceStatus,
-    pyth_wormhole_attester_sdk::{
+    unispot_sdk_solana::state::PriceStatus,
+    unispot_wormhole_attester_sdk::{
         BatchPriceAttestation,
         Identifier,
         P2WEmitter,
@@ -49,7 +49,7 @@ use {
 /// Important: must be manually maintained until native Solitaire
 /// variable len vector support.
 ///
-/// The number must reflect how many pyth state/price pairs are
+/// The number must reflect how many unispot state/price pairs are
 /// expected in the Attest struct below. The constant itself is only
 /// used in the on-chain config in order for attesters to learn the
 /// correct value dynamically.
@@ -64,36 +64,36 @@ pub struct Attest<'b> {
 
     // Hardcoded state/price pairs, bypassing Solitaire's variable-length limitations
     // Any change to the number of accounts must include an appropriate change to P2W_MAX_BATCH_SIZE
-    pub pyth_state: Mut<AttestationStatePDA<'b>>,
-    pub pyth_price: Info<'b>,
+    pub unispot_state: Mut<AttestationStatePDA<'b>>,
+    pub unispot_price: Info<'b>,
 
-    pub pyth_state2: Option<Mut<AttestationStatePDA<'b>>>,
-    pub pyth_price2: Option<Info<'b>>,
+    pub unispot_state2: Option<Mut<AttestationStatePDA<'b>>>,
+    pub unispot_price2: Option<Info<'b>>,
 
-    pub pyth_state3: Option<Mut<AttestationStatePDA<'b>>>,
-    pub pyth_price3: Option<Info<'b>>,
+    pub unispot_state3: Option<Mut<AttestationStatePDA<'b>>>,
+    pub unispot_price3: Option<Info<'b>>,
 
-    pub pyth_state4: Option<Mut<AttestationStatePDA<'b>>>,
-    pub pyth_price4: Option<Info<'b>>,
+    pub unispot_state4: Option<Mut<AttestationStatePDA<'b>>>,
+    pub unispot_price4: Option<Info<'b>>,
 
-    pub pyth_state5: Option<Mut<AttestationStatePDA<'b>>>,
-    pub pyth_price5: Option<Info<'b>>,
+    pub unispot_state5: Option<Mut<AttestationStatePDA<'b>>>,
+    pub unispot_price5: Option<Info<'b>>,
 
-    // Did you read the comment near `pyth_state`?
-    // pub pyth_state6: Option<Mut<AttestationStatePDA<'b>>>,
-    // pub pyth_price6: Option<Info<'b>>,
+    // Did you read the comment near `unispot_state`?
+    // pub unispot_state6: Option<Mut<AttestationStatePDA<'b>>>,
+    // pub unispot_price6: Option<Info<'b>>,
 
-    // pub pyth_state7: Option<Mut<AttestationStatePDA<'b>>>,
-    // pub pyth_price7: Option<Info<'b>>,
+    // pub unispot_state7: Option<Mut<AttestationStatePDA<'b>>>,
+    // pub unispot_price7: Option<Info<'b>>,
 
-    // pub pyth_state8: Option<Mut<AttestationStatePDA<'b>>>,
-    // pub pyth_price8: Option<Info<'b>>,
+    // pub unispot_state8: Option<Mut<AttestationStatePDA<'b>>>,
+    // pub unispot_price8: Option<Info<'b>>,
 
-    // pub pyth_state9: Option<Mut<AttestationStatePDA<'b>>>,
-    // pub pyth_price9: Option<Info<'b>>,
+    // pub unispot_state9: Option<Mut<AttestationStatePDA<'b>>>,
+    // pub unispot_price9: Option<Info<'b>>,
 
-    // pub pyth_state10: Option<Mut<AttestationStatePDA<'b>>>,
-    // pub pyth_price10: Option<Info<'b>>,
+    // pub unispot_state10: Option<Mut<AttestationStatePDA<'b>>>,
+    // pub unispot_price10: Option<Info<'b>>,
     pub clock: Sysvar<'b, Clock>,
 
     /// Wormhole program address - must match the config value
@@ -162,17 +162,17 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
 
     // Make the specified prices iterable
     let mut price_pair_opts = [
-        (Some(&mut accs.pyth_state), Some(&accs.pyth_price)),
-        (accs.pyth_state2.as_mut(), accs.pyth_price2.as_ref()),
-        (accs.pyth_state3.as_mut(), accs.pyth_price3.as_ref()),
-        (accs.pyth_state4.as_mut(), accs.pyth_price4.as_ref()),
-        (accs.pyth_state5.as_mut(), accs.pyth_price5.as_ref()),
-        // Did you read the comment near `pyth_state`?
-        // (accs.pyth_state6.as_mut(), accs.pyth_price6.as_ref()),
-        // (accs.pyth_state7.as_mut(), accs.pyth_price7.as_ref()),
-        // (accs.pyth_state8.as_mut(), accs.pyth_price8.as_ref()),
-        // (accs.pyth_state9.as_mut(), accs.pyth_price9.as_ref()),
-        // (accs.pyth_state10.as_mut(), accs.pyth_price10.as_ref()),
+        (Some(&mut accs.unispot_state), Some(&accs.unispot_price)),
+        (accs.unispot_state2.as_mut(), accs.unispot_price2.as_ref()),
+        (accs.unispot_state3.as_mut(), accs.unispot_price3.as_ref()),
+        (accs.unispot_state4.as_mut(), accs.unispot_price4.as_ref()),
+        (accs.unispot_state5.as_mut(), accs.unispot_price5.as_ref()),
+        // Did you read the comment near `unispot_state`?
+        // (accs.unispot_state6.as_mut(), accs.unispot_price6.as_ref()),
+        // (accs.unispot_state7.as_mut(), accs.unispot_price7.as_ref()),
+        // (accs.unispot_state8.as_mut(), accs.unispot_price8.as_ref()),
+        // (accs.unispot_state9.as_mut(), accs.unispot_price9.as_ref()),
+        // (accs.unispot_state10.as_mut(), accs.unispot_price10.as_ref()),
     ];
 
     let price_pairs: Vec<(_, _)> = price_pair_opts
@@ -185,7 +185,7 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
         .collect();
 
 
-    trace!("{} Pyth symbols received", price_pairs.len());
+    trace!("{} UniSpot symbols received", price_pairs.len());
 
     // Collect the validated symbols here for batch serialization
     let mut attestations = Vec::with_capacity(price_pairs.len());
@@ -195,11 +195,11 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
 
     let mut over_rate_limit = true;
     for (state, price) in price_pairs.into_iter() {
-        // Pyth must own the price
-        if accs.config.pyth_owner != *price.owner {
+        // UniSpot must own the price
+        if accs.config.unispot_owner != *price.owner {
             trace!(&format!(
-                "Price {:?}: owner pubkey mismatch (expected pyth_owner {:?}, got unknown price owner {:?})",
-                price, accs.config.pyth_owner, price.owner
+                "Price {:?}: owner pubkey mismatch (expected unispot_owner {:?}, got unknown price owner {:?})",
+                price, accs.config.unispot_owner, price.owner
             ));
             return Err(SolitaireError::InvalidOwner(*price.owner));
         }
@@ -216,10 +216,10 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
 
         let price_data_ref = price.try_borrow_data()?;
 
-        // Parse the upstream Pyth struct to extract current publish
+        // Parse the upstream UniSpot struct to extract current publish
         // time for payload construction
         let price_struct =
-            pyth_sdk_solana::state::load_price_account(&price_data_ref).map_err(|e| {
+            unispot_sdk_solana::state::load_price_account(&price_data_ref).map_err(|e| {
                 trace!(&e.to_string());
                 ProgramError::InvalidAccountData
             })?;
@@ -248,7 +248,7 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
         };
 
         // Build an attestatioin struct for this symbol using the just decided current value
-        let attestation = PriceAttestation::from_pyth_price_struct(
+        let attestation = PriceAttestation::from_unispot_price_struct(
             Identifier::new(price.key.to_bytes()),
             this_attestation_time,
             current_last_attested_trading_publish_time,

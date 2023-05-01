@@ -3,7 +3,7 @@ pub struct Config {
     symbols: Vec<P2WSymbol>,
 }
 
-/// Config entry for a Pyth2Wormhole product + price pair
+/// Config entry for a UniSpot2Wormhole product + price pair
 #[derive(Deserialize, Serialize)]
 pub struct P2WSymbol {
     /// Optional human-readable name, never used on-chain; makes

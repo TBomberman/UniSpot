@@ -4,7 +4,7 @@ use {
         CosmosMsg,
         CustomMsg,
     },
-    pyth_wormhole_attester_sdk::PriceAttestation,
+    unispot_wormhole_attester_sdk::PriceAttestation,
     schemars::JsonSchema,
     serde::{
         Deserialize,
@@ -42,7 +42,7 @@ impl From<&PriceAttestation> for InjectivePriceAttestation {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum InjectiveMsg {
-    RelayPythPrices {
+    RelayUniSpotPrices {
         sender:             Addr,
         price_attestations: Vec<InjectivePriceAttestation>,
     },
@@ -56,13 +56,13 @@ pub struct InjectiveMsgWrapper {
     pub msg_data: InjectiveMsg,
 }
 
-pub fn create_relay_pyth_prices_msg(
+pub fn create_relay_unispot_prices_msg(
     sender: Addr,
     price_attestations: Vec<PriceAttestation>,
 ) -> CosmosMsg<InjectiveMsgWrapper> {
     InjectiveMsgWrapper {
         route:    "oracle".to_string(),
-        msg_data: InjectiveMsg::RelayPythPrices {
+        msg_data: InjectiveMsg::RelayUniSpotPrices {
             sender,
             price_attestations: price_attestations
                 .iter()

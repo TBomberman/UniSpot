@@ -1,4 +1,4 @@
-# Pyth SDK CW
+# UniSpot SDK CW
 
 This crate exposes utilities to interact with the contract on the CosmWasm ecosystem.
 You can also look at the [example contract](../examples/cw-contract/) which demonstrates how to read price feeds from on-chain CosmWasm applications.
@@ -9,29 +9,29 @@ Add this crate to the dependencies section of your CosmWasm contract's `Cargo.to
 
 ```
 [dependencies]
-pyth-sdk-cw = "1.0.0"
+unispot-sdk-cw = "1.0.0"
 ```
 
 ## Usage
 
-Simply import the structs exposed by the crate and use them while interacting with the pyth contract. For example:
+Simply import the structs exposed by the crate and use them while interacting with the unispot contract. For example:
 
 ```rust
-// to query Pyth contract
-use pyth_sdk_cw::{
+// to query UniSpot contract
+use unispot_sdk_cw::{
     PriceFeedResponse,
     query_price_feed,
 };
 
 ... {
-    let price_feed_response: PriceFeedResponse = query_price_feed(&deps.querier, state.pyth_contract_addr, state.price_feed_id)?;
+    let price_feed_response: PriceFeedResponse = query_price_feed(&deps.querier, state.unispot_contract_addr, state.price_feed_id)?;
     let price_feed = price_feed_response.price_feed;
 }
 ....
 ```
 
 This snippet returns a `PriceFeed` struct which exposes methods for reading the current price along with other useful functionality.
-See the [Pyth common SDK documentation](https://github.com/pyth-network/pyth-sdk-rs/tree/main/pyth-sdk#pyth-network-common-rust-sdk) for more information
+See the [UniSpot common SDK documentation](https://github.com/unispot-network/unispot-sdk-rs/tree/main/unispot-sdk#unispot-network-common-rust-sdk) for more information
 about this struct.
 The common SDK also provides methods for combining price feeds in several useful ways.
 These methods allow you to derive prices for alternative quote currencies -- for example, to derive the BTC/ETH price from
@@ -39,7 +39,7 @@ the BTC/USD and ETH/USD price feeds -- and to price baskets of currencies.
 
 ## Contracts and Price Feeds
 
-Pyth is currently available on the following cosmwasm chains:
+UniSpot is currently available on the following cosmwasm chains:
 
 ### Testnet
 
@@ -53,4 +53,4 @@ Available price feeds on these networks can be find below:
 
 | Network           | Available Price Feeds                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Injective Testnet | [https://pyth.network/developers/price-feed-ids#injective-testnet](https://pyth.network/developers/price-feed-ids#injective-testnet) |
+| Injective Testnet | [https://unispot.network/developers/price-feed-ids#injective-testnet](https://unispot.network/developers/price-feed-ids#injective-testnet) |
