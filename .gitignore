@@ -33,3 +33,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pyth
+build
+node_modules
+.idea
+.arcconfig
+*.iml
+bin
+target
+/mutagen.sh
+venv
+.env
+bigtable-admin.json
+bigtable-writer.json
+.vscode
+.dccache
+.aptos
+tsconfig.tsbuildinfo
+*~
+*mnemonic*
+.envrc
+.DS_Store
