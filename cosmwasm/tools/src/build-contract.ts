@@ -80,7 +80,7 @@ function build() {
 
   const buildCommand = `
           docker run --rm -v "$(cd ..; pwd)":/code \
-          -v "$(cd ../../../wormhole_attester; pwd)":/wormhole_attester \
+          -v "$(cd ../../wormhole_attester; pwd)":/wormhole_attester \
           --mount type=volume,source="$(basename "$(cd ..; pwd)")_cache",target=/code/target \
           --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
           ${dockerImage}
