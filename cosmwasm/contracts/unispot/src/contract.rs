@@ -59,7 +59,7 @@ use {
         WasmMsg,
         WasmQuery,
     },
-    unispot_sdk_cw::{
+    pyth_sdk_cw::{
         error::UniSpotContractError,
         ExecuteMsg,
         Price,
@@ -679,8 +679,8 @@ mod test {
             SystemResult,
             Uint128,
         },
-        unispot_sdk::UnixTimestamp,
-        unispot_sdk_cw::PriceIdentifier,
+        pyth_sdk::UnixTimestamp,
+        pyth_sdk_cw::PriceIdentifier,
         unispot_wormhole_attester_sdk::PriceAttestation,
         std::time::Duration,
     };

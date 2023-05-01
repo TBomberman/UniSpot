@@ -24,7 +24,7 @@ log = "0.4.14"
 wormhole-bridge-solana = {git = "https://github.com/wormhole-foundation/wormhole", tag = "v2.14.8"}
 unispot-wormhole-attester = {path = "../program"}
 unispot-wormhole-attester-sdk = { path = "../sdk/rust", features=["solana"] }
-unispot-sdk-solana = "0.6.1"
+pyth-sdk-solana = "0.6.1"
 serde = "1"
 serde_yaml = "0.8"
 shellexpand = "2.1.0"

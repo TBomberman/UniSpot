@@ -6,14 +6,14 @@
 //! similar human-readable names and provide a failsafe for some of
 //! the probable adversarial scenarios.
 
-pub use unispot_sdk::{
+pub use pyth_sdk::{
     Identifier,
     PriceStatus,
     UnixTimestamp,
 };
 #[cfg(feature = "solana")]
 use {
-    unispot_sdk_solana::state::PriceAccount,
+    pyth_sdk_solana::state::PriceAccount,
     solitaire::{
         Derive,
         Info,
@@ -288,7 +288,7 @@ impl PriceAttestation {
         last_attested_publish_time: UnixTimestamp,
         value: &[u8],
     ) -> Result<Self, ErrBox> {
-        let price_struct = unispot_sdk_solana::state::load_price_account(value)?;
+        let price_struct = pyth_sdk_solana::state::load_price_account(value)?;
         Ok(Self::from_unispot_price_struct(
             price_id,
             attestation_time,
@@ -502,7 +502,7 @@ impl PriceAttestation {
 mod tests {
     use {
         super::*,
-        unispot_sdk_solana::state::PriceStatus,
+        pyth_sdk_solana::state::PriceStatus,
     };
 
     fn mock_attestation(prod: Option<[u8; 32]>, price: Option<[u8; 32]>) -> PriceAttestation {

@@ -16,7 +16,7 @@ use {
         ReadonlySingleton,
         Singleton,
     },
-    unispot_sdk_cw::PriceFeed,
+    pyth_sdk_cw::PriceFeed,
     schemars::JsonSchema,
     serde::{
         Deserialize,

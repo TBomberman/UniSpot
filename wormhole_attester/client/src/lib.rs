@@ -42,7 +42,7 @@ use {
         trace,
         warn,
     },
-    unispot_sdk_solana::state::{
+    pyth_sdk_solana::state::{
         load_mapping_account,
         load_price_account,
         load_product_account,

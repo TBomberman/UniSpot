@@ -4,8 +4,8 @@ This crate includes the actual contract for the CosmWasm ecosystem.
 
 ## Integration
 
-You can use `unispot-sdk-cw` which has been published to crates.io to integrate with the UniSpot contract.
-The sdk exposes data structures and testing utilities for ease of use. Please look into this [unispot-sdk-cw](https://github.com/unispot-network/unispot-crosschain/tree/main/target_chains/cosmwasm/sdk/rust)
+You can use `pyth-sdk-cw` which has been published to crates.io to integrate with the UniSpot contract.
+The sdk exposes data structures and testing utilities for ease of use. Please look into this [pyth-sdk-cw](https://github.com/unispot-network/unispot-crosschain/tree/main/target_chains/cosmwasm/sdk/rust)
 
 ## Off-Chain Queries
 

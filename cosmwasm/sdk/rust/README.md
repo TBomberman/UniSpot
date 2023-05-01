@@ -9,7 +9,7 @@ Add this crate to the dependencies section of your CosmWasm contract's `Cargo.to
 
 ```
 [dependencies]
-unispot-sdk-cw = "1.0.0"
+pyth-sdk-cw = "1.0.0"
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ Simply import the structs exposed by the crate and use them while interacting wi
 
 ```rust
 // to query UniSpot contract
-use unispot_sdk_cw::{
+use pyth_sdk_cw::{
     PriceFeedResponse,
     query_price_feed,
 };
@@ -31,7 +31,7 @@ use unispot_sdk_cw::{
 ```
 
 This snippet returns a `PriceFeed` struct which exposes methods for reading the current price along with other useful functionality.
-See the [UniSpot common SDK documentation](https://github.com/unispot-network/unispot-sdk-rs/tree/main/unispot-sdk#unispot-network-common-rust-sdk) for more information
+See the [UniSpot common SDK documentation](https://github.com/unispot-network/pyth-sdk-rs/tree/main/pyth-sdk#unispot-network-common-rust-sdk) for more information
 about this struct.
 The common SDK also provides methods for combining price feeds in several useful ways.
 These methods allow you to derive prices for alternative quote currencies -- for example, to derive the BTC/ETH price from

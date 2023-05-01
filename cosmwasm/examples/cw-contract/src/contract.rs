@@ -15,7 +15,7 @@ use cosmwasm_std::{
     Coin,
 };
 
-use unispot_sdk_cw::{
+use pyth_sdk_cw::{
     PriceFeedResponse,
     get_update_fee,
     get_valid_time_period,
@@ -150,8 +150,8 @@ mod test {
         Timestamp,
         WasmQuery,
     };
-    use unispot_sdk_cw::testing::MockUniSpot;
-    use unispot_sdk_cw::{
+    use pyth_sdk_cw::testing::MockUniSpot;
+    use pyth_sdk_cw::{
         Price,
         PriceFeed,
         PriceIdentifier,

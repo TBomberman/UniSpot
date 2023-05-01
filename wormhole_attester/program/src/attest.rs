@@ -16,7 +16,7 @@ use {
         accounts::BridgeData,
         types::ConsistencyLevel,
     },
-    unispot_sdk_solana::state::PriceStatus,
+    pyth_sdk_solana::state::PriceStatus,
     unispot_wormhole_attester_sdk::{
         BatchPriceAttestation,
         Identifier,
@@ -219,7 +219,7 @@ pub fn attest(ctx: &ExecutionContext, accs: &mut Attest, data: AttestData) -> So
         // Parse the upstream UniSpot struct to extract current publish
         // time for payload construction
         let price_struct =
-            unispot_sdk_solana::state::load_price_account(&price_data_ref).map_err(|e| {
+            pyth_sdk_solana::state::load_price_account(&price_data_ref).map_err(|e| {
                 trace!(&e.to_string());
                 ProgramError::InvalidAccountData
             })?;

@@ -314,7 +314,7 @@ dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",
  "cw-storage-plus",
- "unispot-sdk-cw",
+ "pyth-sdk-cw",
  "schemars",
  "serde",
 ]
@@ -471,7 +471,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "unispot-sdk"
+name = "pyth-sdk"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00bf2540203ca3c7a5712fdb8b5897534b7f6a0b6e7b0923ff00466c5f9efcb3"
@@ -484,12 +484,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "unispot-sdk-cw"
+name = "pyth-sdk-cw"
 version = "0.1.0"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
- "unispot-sdk",
+ "pyth-sdk",
  "thiserror",
 ]
 

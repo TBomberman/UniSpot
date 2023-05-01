@@ -4,7 +4,7 @@ use {
         InstantiateMsg,
         MigrateMsg,
     },
-    unispot_sdk_cw::{
+    pyth_sdk_cw::{
         ExecuteMsg,
         QueryMsg,
     },

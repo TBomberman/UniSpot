@@ -1,5 +1,5 @@
 [package]
-name = "unispot-sdk-cw"
+name = "pyth-sdk-cw"
 version = "1.2.0"
 authors = ["UniSpot Data Foundation"]
 edition = "2018"
@@ -15,7 +15,7 @@ keywords = [ "unispot", "oracle", "cosmwasm" ]
 osmosis=[]
 
 [dependencies]
-unispot-sdk = "0.7.0"
+pyth-sdk = "0.7.0"
 cosmwasm-std = { version = "1.0.0" }
 cosmwasm-schema = "1.1.9"
 thiserror = "1.0.20"

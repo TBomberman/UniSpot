@@ -1,7 +1,7 @@
 //! This module contains test fixtures for instantiating plausible
 //! UniSpot accounts for testing purposes.
 use {
-    unispot_sdk_solana::state::{
+    pyth_sdk_solana::state::{
         AccountType,
         PriceAccount,
         ProductAccount,
