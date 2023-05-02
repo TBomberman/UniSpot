@@ -5,6 +5,9 @@ const ethers_1 = require("ethers");
 const bignumber_1 = require("@ethersproject/bignumber");
 const IUniswapV2Pair_json_1 = require("@uniswap/v2-core/build/IUniswapV2Pair.json");
 const IERC20_json_1 = require("@uniswap/v2-core/build/IERC20.json");
+const sdk_ts_1 = require("@injectivelabs/sdk-ts");
+const index_1 = require("../constants/index");
+const UNISPOT_CONTRACT_ADDRESS = 'inj1cy8dm3l2una56y9zt8u95xsr73evq5rkcp958y';
 async function main() {
     await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true);
     await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true);
@@ -34,6 +37,25 @@ const getPriceData = async (pairAddrMain, tokensReversed) => {
     }
     const price = getPrice(ratioMain, 18);
     console.log(`Price for ${symbol} = ${price}`);
+    const updateFee = await index_1.INJECTIVE_WALLET.querySmartContract(UNISPOT_CONTRACT_ADDRESS, {
+        get_update_fee: {
+            vaas: [btoa(price)],
+        },
+    });
+    updateFee.denom = 'inj';
+    // pyth update request
+    const executeMsg = sdk_ts_1.MsgExecuteContract.fromJSON({
+        sender: index_1.INJECTIVE_WALLET.getAddress(),
+        contractAddress: UNISPOT_CONTRACT_ADDRESS,
+        msg: {
+            update_price_feeds: {
+                data: [btoa(price)],
+            },
+        },
+        funds: [updateFee],
+    });
+    const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([executeMsg]);
+    console.log(`TxHash: ${res.txHash}`);
 };
 main().catch((error) => {
     console.error(error);

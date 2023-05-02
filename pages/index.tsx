@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { IBM_Plex_Mono } from 'next/font/google'
 import Logo from '@/assets/logo.png'
 import { HiOutlineUserCircle } from 'react-icons/hi'
 import { BsArrowRight } from 'react-icons/bs'
@@ -10,20 +10,23 @@ import { RiExchangeFundsLine } from 'react-icons/ri'
 import PriceChart from '@/components/PriceChart'
 import price from '@/config/Prices.json'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = IBM_Plex_Mono({
+  weight: ['100', '200', '300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+})
 
 export default function Home() {
   return (
-    <main className={`flex w-full text-black ${inter.className}`}>
-      <div className={'min-h-screen w-1/4 bg-[#f8fafb] px-8 py-10'}>
+    <main className={`flex w-full ${inter.className}`}>
+      <div className={'min-h-screen w-1/4 bg-[#1E1F20] px-8 py-10'}>
         <div className={'mb-8 flex gap-2 justify-center items-center'}>
           <Image src={Logo} alt={'Logo'} className={'w-8 h-8'} />
-          <h1 className={'font-bold text-black text-3xl text-center'}>
+          <h1 className={'font-bold text-white text-3xl text-center'}>
             <span className={'text-[#6271EB]'}>Uni</span>Spot
           </h1>
         </div>
         <div>
-          <div className={'flex justify-between text-black py-3 px-6 rounded-xl cursor-pointer'}>
+          <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
               <HiOutlineUserCircle />
               Profile
@@ -36,25 +39,25 @@ export default function Home() {
             </div>
             <BsArrowRight />
           </div>
-          <div className={'text-black py-3 px-6 rounded-xl cursor-pointer'}>
+          <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
               <IoWalletOutline />
               Wallet
             </div>
           </div>
-          <div className={'text-black py-3 px-6 rounded-xl cursor-pointer'}>
+          <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
               <TbArrowsExchange />
               Trade
             </div>
           </div>
-          <div className={'text-black py-3 px-6 rounded-xl cursor-pointer'}>
+          <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
               <IoNotificationsOutline />
               Notifications
             </div>
           </div>
-          <div className={'text-black py-3 px-6 rounded-xl cursor-pointer'}>
+          <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
               <RiExchangeFundsLine />
               Exhanges
@@ -62,7 +65,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={'w-3/4 bg-white py-10 px-8'}>
+      <div className={'w-3/4 bg-[#121212] py-10 px-8'}>
         <div className={'flex w-full justify-between items-center mb-8'}>
           <div className={'text-4xl font-bold'}>
             <p>$46,541.04</p>
@@ -72,22 +75,22 @@ export default function Home() {
           </div>
         </div>
         <div className={'flex gap-4 mt-4 justify-end'}>
-          <div className={'bg-blue-50 text-[#6271EB] py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-[#1E232A] text-[#6271EB] py-3 px-4 rounded-xl cursor-pointer'}>
             <p>1H</p>
           </div>
-          <div className={'bg-white border border-gray-50 py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
             <p>24H</p>
           </div>
-          <div className={'bg-white border border-gray-50 py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
             <p>1W</p>
           </div>
-          <div className={'bg-white border border-gray-50 py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
             <p>1M</p>
           </div>
-          <div className={'bg-white border border-gray-50 py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
             <p>6M</p>
           </div>
-          <div className={'bg-white border border-gray-50 py-3 px-4 rounded-xl cursor-pointer'}>
+          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
             <p>1Y</p>
           </div>
         </div>

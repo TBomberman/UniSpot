@@ -23,9 +23,9 @@ const PriceChart = ({ data }: PriceChartProps) => {
           </defs>
           <XAxis dataKey="date" tick={<CustomizedAxisTick />} height={200} />
           <YAxis />
-          <CartesianGrid strokeDasharray="0" stroke="#ccc" vertical={false} />
+          <CartesianGrid strokeDasharray="0" stroke="#808080" strokeWidth={0.1} />
           <Tooltip />
-          <Area type="monotone" dataKey="price" strokeWidth={4} activeDot={{ r: 6 }} stroke="#6271EB" fill="url(#priceGradient)" />
+          <Area type="monotone" dataKey="price" strokeWidth={1} activeDot={{ r: 6 }} stroke="#6271EB" fill="url(#priceGradient)" />
         </AreaChart>
       </ResponsiveContainer>
     </div>
