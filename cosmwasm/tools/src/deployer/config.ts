@@ -53,6 +53,14 @@ export const CONFIG: Config = {
       endpoint: "http://localhost:26657",
     },
   },
+  [NETWORKS.INJECTIVE_MAINNET]: {
+    type: CONFIG_TYPE.TERRA,
+    host: {
+      URL: "",
+      chainID: "",
+      name: ""
+    }
+  }
 };
 
 export type Config = Record<NETWORKS, NetworkConfig>;

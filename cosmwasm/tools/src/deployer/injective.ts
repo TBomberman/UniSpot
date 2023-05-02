@@ -203,6 +203,8 @@ export class InjectiveDeployer implements Deployer {
 
   static fromHostAndMnemonic(host: InjectiveHost, mnemonic: string) {
     const wallet = PrivateKey.fromMnemonic(mnemonic);
+    console.log("inj address", wallet.toBech32());
+    console.log("address", wallet.toAddress());
     return new InjectiveDeployer(host.network, wallet);
   }
 }
