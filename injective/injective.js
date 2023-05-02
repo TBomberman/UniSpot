@@ -26,9 +26,9 @@ class Injective {
             pubKey: this.wallet.toPublicKey().toBase64(),
         });
         const txService = new sdk_ts_1.TxGrpcClient(this.grpcEndpoint);
-        // // simulation
+        // simulation
+        // FIXME: Error is occurring in the simulate function
         const { gasInfo: { gasUsed }, } = await txService.simulate(simulateTxRaw);
-        console.log(`Gas used for simulation: ${gasUsed}`);
         const fee = {
             amount: [
                 {
