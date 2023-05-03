@@ -1,0 +1,113 @@
+{
+  "contract_name": "unispot",
+  "contract_version": "0.1.0",
+  "idl_version": "1.0.0",
+  "instantiate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "InstantiateMsg",
+    "type": "object",
+    "required": [
+      "count"
+    ],
+    "properties": {
+      "count": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
+    "additionalProperties": false
+  },
+  "execute": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ExecuteMsg",
+    "oneOf": [
+      {
+        "type": "object",
+        "required": [
+          "update_price"
+        ],
+        "properties": {
+          "update_price": {
+            "type": "object",
+            "required": [
+              "pair_name",
+              "price"
+            ],
+            "properties": {
+              "pair_name": {
+                "type": "string"
+              },
+              "price": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "query": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "QueryMsg",
+    "oneOf": [
+      {
+        "type": "object",
+        "required": [
+          "get_price"
+        ],
+        "properties": {
+          "get_price": {
+            "type": "object",
+            "required": [
+              "pair_name"
+            ],
+            "properties": {
+              "pair_name": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "migrate": null,
+  "sudo": null,
+  "responses": {
+    "get_price": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GetPriceResponse",
+      "type": "object",
+      "required": [
+        "price"
+      ],
+      "properties": {
+        "price": {
+          "$ref": "#/definitions/Price"
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Price": {
+          "type": "object",
+          "required": [
+            "name",
+            "price"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "price": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
