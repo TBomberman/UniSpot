@@ -29,9 +29,11 @@ export class Injective {
     const txService = new TxGrpcClient(this.grpcEndpoint)
     // simulation
     // FIXME: Error is occurring in the simulate function
-    const {
-      gasInfo: { gasUsed },
-    } = await txService.simulate(simulateTxRaw)
+    // const {
+    //   gasInfo: { gasUsed },
+    // } = await txService.simulate(simulateTxRaw)
+
+    console.log(`Estimated gas: ${30000000} | Estimated fee: ${`${30000000 * this.gasPrice * this.gasMultiplier}`} INJ`)
 
     const fee = {
       amount: [
