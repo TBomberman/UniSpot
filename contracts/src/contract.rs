@@ -87,7 +87,7 @@ mod tests {
     fn proper_initialization() {
         let mut deps = mock_dependencies();
 
-        let msg = InstantiateMsg { count: 17 };
+        let msg = InstantiateMsg {};
         let info = mock_info("Unispot Creator", &coins(1000, "US"));
 
         // we can just call .unwrap() to assert this was a success
@@ -99,7 +99,7 @@ mod tests {
     fn update_price() {
         let mut deps = mock_dependencies();
 
-        let msg = InstantiateMsg { count: 17 };
+        let msg = InstantiateMsg {};
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 

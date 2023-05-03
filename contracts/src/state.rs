@@ -1,10 +1,7 @@
 use  {
     schemars::JsonSchema,
     serde::{Deserialize, Serialize},
-    cosmwasm_std::{
-        Addr,
-        Storage,
-    },
+    cosmwasm_std::{Storage},
     cosmwasm_storage::{
         bucket,
         bucket_read,
@@ -13,15 +10,7 @@ use  {
     }
 };
 
-pub static SINGLETONS_KEY: &[u8] = b"singletons";
 pub static PRICE_KEY: &[u8] = b"price";
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct Singletons {
-    pub count: i32,
-    pub owner: Addr,
-    pub prices: Vec<String>,
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct Price {
