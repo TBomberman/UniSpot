@@ -150,7 +150,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> StdResult<Response<MsgWrapper>> {
     match msg {
-        ExecuteMsg::UpdatePriceFeeds { data } => update_price_feeds(deps, env, info, &data),
+        ExecuteMsg::UpdatePriceFeeds { price_attestation } => update_price_feeds(deps, env, info, price_attestation),
         ExecuteMsg::ExecuteGovernanceInstruction { data } => {
             execute_governance_instruction(deps, env, info, &data)
         }
@@ -238,31 +238,25 @@ fn update_price_feeds(
     mut deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    data: &[Binary],
+    price_attestation: PriceAttestation,
 ) -> StdResult<Response<MsgWrapper>> {
     let state = config_read(deps.storage).load()?;
 
-    if !is_fee_sufficient(&deps.as_ref(), info, data)? {
-        return Err(UniSpotContractError::InsufficientFee)?;
-    }
-
     let mut num_total_attestations: usize = 0;
     let mut total_new_attestations: Vec<PriceAttestation> = vec![];
+    let mut batch_attestation: Vec<PriceAttestation> = vec![];
 
-    for datum in data {
-        let vaa = parse_and_verify_vaa(deps.branch(), env.block.time.seconds(), datum)?;
-        verify_vaa_from_data_source(&state, &vaa)?;
+    // here create your own batch_attestation which is an array of price_attestations
+    // you will just use 1 price attestation
+    
+    batch_attestation.push(price_attestation);
 
-        let data = &vaa.payload;
-        let batch_attestation = BatchPriceAttestation::deserialize(&data[..])
-            .map_err(|_| UniSpotContractError::InvalidUpdatePayload)?;
+    let (num_attestations, new_attestations) =
+        process_batch_attestation(&mut deps, &env, &batch_attestation)?;
 
-        let (num_attestations, new_attestations) =
-            process_batch_attestation(&mut deps, &env, &batch_attestation)?;
-        num_total_attestations += num_attestations;
-        for new_attestation in new_attestations {
-            total_new_attestations.push(new_attestation.to_owned());
-        }
+    num_total_attestations += num_attestations;
+    for new_attestation in new_attestations {
+        total_new_attestations.push(new_attestation.to_owned());
     }
 
     let num_total_new_attestations = total_new_attestations.len();

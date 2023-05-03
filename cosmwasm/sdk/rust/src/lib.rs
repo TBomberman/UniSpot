@@ -28,7 +28,7 @@ use {
 #[derive(Eq)]
 #[cw_serde]
 pub enum ExecuteMsg {
-    UpdatePriceFeeds { data: Vec<Binary> },
+    UpdatePriceFeeds { price_attestation: PriceAttestation },
     ExecuteGovernanceInstruction { data: Binary },
 }
 
