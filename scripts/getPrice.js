@@ -11,33 +11,18 @@ const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8';
 async function main() {
     await getPriceData("0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", [18, 6], true); // ETH-USDT
     await getPriceData("0xbb2b8038a1640196fbe3e38816f3e67cba72d940", [8, 18], true); // WBTC-ETH
-    // await getPriceData("0xd3d2e2692501a5c9ca623199d38826e513033a17", [18,18], true); // UNI-ETH
-    // await getPriceData("0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd", [18,18], true); // DOGE-USDT
-    // await getPriceData("0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5", [18,18], true); // DAI-USDC
-    // await getPriceData("0x819f3450da6f110ba6ea52195b3beafa246062de", [18,18], true); // MATIC-ETH
+    await getPriceData("0xd3d2e2692501a5c9ca623199d38826e513033a17", [18, 18], true); // UNI-ETH
+    await getPriceData("0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd", [8, 6], true); // DOGE-USDT
+    await getPriceData("0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5", [18, 6], true); // DAI-USDC
+    await getPriceData("0x819f3450da6f110ba6ea52195b3beafa246062de", [18, 18], true); // MATIC-ETH
 }
 exports.main = main;
-const formatPx = (value, decimals) => {
-    console.log("formatPx 1", value.toString());
-    // const formatDecimals = 18 + decimals[0] - decimals [1]
-    const formatDecimals = 18;
-    console.log("formatPx 2", formatDecimals);
-    return bignumber_1.FixedNumber.fromValue(value, formatDecimals).toString();
-};
-const calcPriceIn18 = (reserve0, reserve1, decimals) => {
-    console.log("calcPriceIn18 1");
+const getPrice = (ratios, decimals) => {
     const baseFactor = bignumber_1.BigNumber.from(10).pow(18);
     const factor0 = bignumber_1.BigNumber.from(10).pow(decimals[0]);
     const factor1 = bignumber_1.BigNumber.from(10).pow(decimals[1]);
-    // const nicePrecision = BigNumber.from(reserve0).mul(baseFactor).div(BigNumber.from(reserve1))
-    return bignumber_1.BigNumber.from(reserve0).mul(baseFactor).div(bignumber_1.BigNumber.from(reserve1)).mul(factor1).div(factor0);
-    // console.log("calcPriceIn18 2", nicePrecision.toString())
-    // return nicePrecision.mul(factor1).div(factor0)
-};
-const getPrice = (ratios, decimals) => {
-    console.log("getPrice 1");
-    const priceInX = calcPriceIn18(ratios[0], ratios[1], decimals);
-    return formatPx(priceInX, decimals);
+    const nicePrecision = bignumber_1.BigNumber.from(ratios[0]).mul(baseFactor).div(bignumber_1.BigNumber.from(ratios[1])).mul(factor1).div(factor0);
+    return bignumber_1.FixedNumber.fromValue(nicePrecision, 18).toString();
 };
 const getPriceData = async (pairAddrMain, decimalsLocal, tokensReversed) => {
     console.log("pairAddrMain", pairAddrMain);
