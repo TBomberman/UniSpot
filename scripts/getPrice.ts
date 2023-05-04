@@ -6,6 +6,7 @@ import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts'
 import { INJECTIVE_WALLET } from '../constants/index'
 
 const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8'
+const disableLogs = false;
 
 export async function main() {
   await getPriceData("0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", [18,6], true); // ETH-USDT
@@ -29,7 +30,7 @@ const getPriceData = async (
   decimalsLocal: number[],
   tokensReversed: boolean
 ) => {
-  console.log("pairAddrMain", pairAddrMain);
+  if (!disableLogs) console.log("pairAddrMain", pairAddrMain);
   const provider = new ethers.InfuraProvider('homestead', 'af5e7f550821452ba99cb73d238692c0')
   const uniPairMain = new ethers.Contract(pairAddrMain, IUniswapV2PairABI, provider)
   let ratioMain = await uniPairMain.getReserves()
@@ -46,7 +47,7 @@ const getPriceData = async (
     decimalsLocal = [decimalsLocal[1], decimalsLocal[0]];
   }
   const price = getPrice(ratioMain, decimalsLocal);
-  console.log(`Price for ${pairName} = ${price}`)
+  if (!disableLogs) console.log(`Price for ${pairName} = ${price}`)
 
   try {
     const msg = MsgExecuteContractCompat.fromJSON({
@@ -61,12 +62,12 @@ const getPriceData = async (
     })
 
     const res = await INJECTIVE_WALLET.signAndBroadcastMsg([msg])
-    console.log('Success')
+    if (!disableLogs) console.log('Success')
     // console.log(res)
   } catch (e) {
     console.log(e)
   } finally {
-    console.log('Done')
+    if (!disableLogs) console.log('Done')
   }
 }
 

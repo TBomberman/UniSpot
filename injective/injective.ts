@@ -36,7 +36,7 @@ export class Injective {
       console.log(`Transaction failed: ${txResponse.rawLog}`)
       throw new Error(`Transaction failed: ${txResponse.rawLog}`)
     } else {
-      console.log(`Broadcasted transaction hash: ${JSON.stringify(txResponse.txHash)}`)
+      console.log(`Sent tx: ${JSON.stringify(txResponse.txHash)}`)
     }
 
     return txResponse

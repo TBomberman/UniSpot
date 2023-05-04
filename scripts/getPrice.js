@@ -8,6 +8,7 @@ const IERC20_json_1 = require("@uniswap/v2-core/build/IERC20.json");
 const sdk_ts_1 = require("@injectivelabs/sdk-ts");
 const index_1 = require("../constants/index");
 const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8';
+const disableLogs = true;
 async function main() {
     await getPriceData("0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", [18, 6], true); // ETH-USDT
     await getPriceData("0xbb2b8038a1640196fbe3e38816f3e67cba72d940", [8, 18], true); // WBTC-ETH
@@ -25,7 +26,8 @@ const getPrice = (ratios, decimals) => {
     return bignumber_1.FixedNumber.fromValue(nicePrecision, 18).toString();
 };
 const getPriceData = async (pairAddrMain, decimalsLocal, tokensReversed) => {
-    console.log("pairAddrMain", pairAddrMain);
+    if (!disableLogs)
+        console.log("pairAddrMain", pairAddrMain);
     const provider = new ethers_1.ethers.InfuraProvider('homestead', 'af5e7f550821452ba99cb73d238692c0');
     const uniPairMain = new ethers_1.ethers.Contract(pairAddrMain, IUniswapV2Pair_json_1.abi, provider);
     let ratioMain = await uniPairMain.getReserves();
@@ -41,7 +43,8 @@ const getPriceData = async (pairAddrMain, decimalsLocal, tokensReversed) => {
         decimalsLocal = [decimalsLocal[1], decimalsLocal[0]];
     }
     const price = getPrice(ratioMain, decimalsLocal);
-    console.log(`Price for ${pairName} = ${price}`);
+    if (!disableLogs)
+        console.log(`Price for ${pairName} = ${price}`);
     try {
         const msg = sdk_ts_1.MsgExecuteContractCompat.fromJSON({
             contractAddress: UNISPOT_CONTRACT_ADDRESS,
@@ -54,7 +57,8 @@ const getPriceData = async (pairAddrMain, decimalsLocal, tokensReversed) => {
             },
         });
         const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([msg]);
-        console.log('Success');
+        if (!disableLogs)
+            console.log('Success');
         // console.log(res)
     }
     catch (e) {
