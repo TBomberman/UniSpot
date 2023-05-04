@@ -15,7 +15,7 @@ const ProductCard = ({ image, name, price }: ProductCardProps) => {
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name.toLocaleUpperCase()}</div>
-        <p className="text-gray-700 text-base">{price}</p>
+        <p className="text-gray-200 text-base">{price}</p>
       </div>
     </div>
   )
