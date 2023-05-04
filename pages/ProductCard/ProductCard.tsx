@@ -2,20 +2,22 @@ import Image, { StaticImageData } from 'next/image'
 import React from 'react'
 
 interface ProductCardProps {
-  image: StaticImageData
   name: string
   price: string
+  image1: StaticImageData
+  image2: StaticImageData
 }
 
-const ProductCard = ({ image, name, price }: ProductCardProps) => {
+const ProductCard = ({ image1, image2, name, price }: ProductCardProps) => {
   return (
     <div className="max-w-xs rounded overflow-hidden shadow-lg cursor-pointer">
-      <div className="flex justify-center h-48 relative">
-        <Image className="w-full absolute inset-0 h-full object-cover object-center" src={image} alt={name} />
+      <div className="flex justify-center h-32 relative">
+        <Image className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16" src={image1} alt="Image 1" />
+        <Image className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 -mt-4 -ml-8" src={image2} alt="Image 2" />
       </div>
       <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">{name.toLocaleUpperCase()}</div>
-        <p className="text-gray-200 text-base">{price}</p>
+        <div className="font-bold text-4xl mb-2">{name.toLocaleUpperCase()}</div>
+        <p className="text-gray-200 text-4xl">{price}</p>
       </div>
     </div>
   )
