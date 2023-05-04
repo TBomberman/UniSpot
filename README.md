@@ -24,7 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Start price update service
 
-Run `pm2 start ./scripts/fetchPrice.sh --no-autorestart --instances 1 --cron "*/5 * * * *"` to start the price updater. (Stop and delete any existing service.)
+Run `pm2 start sh ./scripts/fetchPrice.sh --no-autorestart --instances 1 --cron "*/5 * * * *"` to start the price updater. (Stop and delete any existing service.)
 
 ## Learn More
 
