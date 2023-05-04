@@ -10,6 +10,9 @@ import { RiExchangeFundsLine } from 'react-icons/ri'
 // import PriceChart from '@/components/PriceChart'
 // import price from '@/config/Prices.json'
 import ProductList from './ProductCard/ProductList'
+import pyth from '../assets/pyth.png'
+import PythList from './PythPrices/PythList'
+import { useState } from 'react'
 
 const inter = IBM_Plex_Mono({
   weight: ['100', '200', '300', '400', '500', '600', '700'],
@@ -17,6 +20,11 @@ const inter = IBM_Plex_Mono({
 })
 
 export default function Home() {
+  const [isPyth, setIsPyth] = useState(false)
+
+  const changeLink = (state: boolean) => {
+    setIsPyth(state)
+  }
   return (
     <main className={`flex w-full ${inter.className}`}>
       <div className={'min-h-screen w-1/4 bg-[#1E1F20] px-8 py-10'}>
@@ -33,12 +41,29 @@ export default function Home() {
               Profile
             </div>
           </div>
-          <div className={'flex justify-between items-center bg-[#6271EB] text-white py-3 px-6 rounded-xl cursor-pointer'}>
+          <div
+            className={`text-white py-3 px-6 rounded-xl cursor-pointer ${!isPyth ? 'flex justify-between items-center bg-[#6271EB]' : ''}`}
+            onClick={() => {
+              changeLink(false)
+            }}
+          >
             <div className={'flex items-center gap-2'}>
               <RxDashboard />
-              Dashboard
+              UniSpot
             </div>
-            <BsArrowRight />
+            {!isPyth && <BsArrowRight />}
+          </div>
+          <div
+            className={`text-white py-2 px-6 rounded-xl cursor-pointer -pl-3 ${isPyth ? 'flex justify-between items-center bg-[#6271EB]' : ''}`}
+            onClick={() => {
+              changeLink(true)
+            }}
+          >
+            <div className={'flex items-center gap-2'}>
+              <Image src={pyth} alt={'pyth'} className={'w-8 h-8'} />
+              <span className={'-ml-2'}>Pyth</span>
+            </div>
+            {isPyth && <BsArrowRight />}
           </div>
           <div className={'text-white py-3 px-6 rounded-xl cursor-pointer'}>
             <div className={'flex items-center gap-2'}>
@@ -67,45 +92,30 @@ export default function Home() {
         </div>
       </div>
       <div className={'w-3/4 bg-[#121212] py-10 px-8'}>
-        <div className={'flex w-full justify-between items-center mb-8'}>
-          <div className={'text-4xl font-bold'}>
-            <p>Crypto Prices</p>
-          </div>
-        </div>
-        <div className="container mx-auto px-4 py-8">
-          <ProductList />
-        </div>
-        {/* <div className={'flex w-full justify-between items-center mb-8'}>
-          <div className={'text-4xl font-bold'}>
-            <p>$46,541.04</p>
-          </div>
-          <div className={'text-xl font-bold'}>
-            <h3>Ethereum (ETH)</h3>
-          </div>
-        </div> */}
-        {/* <div className={'flex gap-4 mt-4 justify-end'}>
-          <div className={'bg-[#1E232A] text-[#6271EB] py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>1H</p>
-          </div>
-          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>24H</p>
-          </div>
-          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>1W</p>
-          </div>
-          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>1M</p>
-          </div>
-          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>6M</p>
-          </div>
-          <div className={'bg-transparent border border-gray-600 py-3 px-4 rounded-xl cursor-pointer'}>
-            <p>1Y</p> G
-          </div>
-        </div> */}
-        {/* <div className={'flex'}>
-          <PriceChart data={price} />
-        </div> */}
+        {!isPyth && (
+          <>
+            <div className={'flex w-full justify-between items-center mb-8'}>
+              <div className={'text-4xl font-bold'}>
+                <p>UniSpot Crypto Prices</p>
+              </div>
+            </div>
+            <div className="container mx-auto px-4 py-8">
+              <ProductList />
+            </div>
+          </>
+        )}
+        {isPyth && (
+          <>
+            <div className={'flex w-full justify-between items-center mb-8'}>
+              <div className={'text-4xl font-bold'}>
+                <p>Pyth Crypto Prices</p>
+              </div>
+            </div>
+            <div className="container mx-auto px-4 py-8">
+              <PythList />
+            </div>
+          </>
+        )}
       </div>
     </main>
   )
