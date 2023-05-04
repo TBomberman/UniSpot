@@ -5,14 +5,16 @@ const ethers_1 = require("ethers");
 const bignumber_1 = require("@ethersproject/bignumber");
 const IUniswapV2Pair_json_1 = require("@uniswap/v2-core/build/IUniswapV2Pair.json");
 const IERC20_json_1 = require("@uniswap/v2-core/build/IERC20.json");
+const sdk_ts_1 = require("@injectivelabs/sdk-ts");
+const index_1 = require("../constants/index");
 const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8';
 async function main() {
-    await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true); // USDC
-    await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true); // DOGE
-    await getPriceData('0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852', true); // ETH
-    await getPriceData('0x61b62c5d56ccd158a38367ef2f539668a06356ab', true); // FNK
-    await getPriceData('0xf8d99cf7046dedcb1dc8cfc309aa96946c9b9db2', true); // XFIT
-    await getPriceData('0xa2f6a219a51b4682e34a13a94c160d6c79cdca35', true); // FILST
+    await getPriceData('0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852', true); // ETH-USDT
+    await getPriceData('0xbb2b8038a1640196fbe3e38816f3e67cba72d940', true); // WBTC-ETH
+    await getPriceData('0xd3d2e2692501a5c9ca623199d38826e513033a17', true); // UNI-ETH
+    await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true); // DOGE-USDT
+    await getPriceData('0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5', true); // DAI-USDC
+    await getPriceData('0x819f3450da6f110ba6ea52195b3beafa246062de', true); // MATIC-ETH
 }
 exports.main = main;
 const formatPx = (value, decimals) => {
@@ -34,32 +36,35 @@ const getPriceData = async (pairAddrMain, tokensReversed) => {
     const token0 = new ethers_1.ethers.Contract(tokenA, IERC20_json_1.abi, provider);
     const tokenB = await uniPairMain.token1();
     const token1 = new ethers_1.ethers.Contract(tokenB, IERC20_json_1.abi, provider);
-    const symbolA = await token0.symbol();
-    console.log((await token0.decimals()).toString());
-    const symbolB = await token1.symbol();
+    const symbol0 = await token0.symbol();
+    const symbol1 = await token1.symbol();
+    const pairName = tokensReversed ? symbol0 + '-' + symbol1 : symbol1 + '-' + symbol0;
     if (tokensReversed) {
         ratioMain = [ratioMain[1], ratioMain[0]];
     }
     const price = getPrice(ratioMain, 18);
-    console.log(`Price for ${symbolA} / ${symbolB} = ${price}`);
-    // try {
-    //   const msg = MsgExecuteContractCompat.fromJSON({
-    //     contractAddress: UNISPOT_CONTRACT_ADDRESS,
-    //     sender: INJECTIVE_WALLET.getAddress(),
-    //     msg: {
-    //       update_price: {
-    //         pair_name: `${symbolA}/${symbolB}`,
-    //         price: price,
-    //       },
-    //     },
-    //   })
-    //   const res = await INJECTIVE_WALLET.signAndBroadcastMsg([msg])
-    //   console.log('Success')
-    // } catch (e) {
-    //   console.log(e)
-    // } finally {
-    //   console.log('Done')
-    // }
+    console.log(`Price for ${pairName} = ${price}`);
+    try {
+        const msg = sdk_ts_1.MsgExecuteContractCompat.fromJSON({
+            contractAddress: UNISPOT_CONTRACT_ADDRESS,
+            sender: index_1.INJECTIVE_WALLET.getAddress(),
+            msg: {
+                update_price: {
+                    pair_name: pairName,
+                    price: price,
+                },
+            },
+        });
+        const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([msg]);
+        console.log('Success');
+        console.log(res);
+    }
+    catch (e) {
+        console.log(e);
+    }
+    finally {
+        console.log('Done');
+    }
 };
 main().catch((error) => {
     console.error(error);
