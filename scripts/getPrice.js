@@ -7,7 +7,7 @@ const IUniswapV2Pair_json_1 = require("@uniswap/v2-core/build/IUniswapV2Pair.jso
 const IERC20_json_1 = require("@uniswap/v2-core/build/IERC20.json");
 const sdk_ts_1 = require("@injectivelabs/sdk-ts");
 const index_1 = require("../constants/index");
-const UNISPOT_CONTRACT_ADDRESS = 'inj1cy8dm3l2una56y9zt8u95xsr73evq5rkcp958y';
+const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8';
 async function main() {
     await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true);
     await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true);
@@ -37,25 +37,27 @@ const getPriceData = async (pairAddrMain, tokensReversed) => {
     }
     const price = getPrice(ratioMain, 18);
     console.log(`Price for ${symbol} = ${price}`);
-    const updateFee = await index_1.INJECTIVE_WALLET.querySmartContract(UNISPOT_CONTRACT_ADDRESS, {
-        get_update_fee: {
-            vaas: [btoa(price)],
-        },
-    });
-    updateFee.denom = 'inj';
-    // pyth update request
-    const executeMsg = sdk_ts_1.MsgExecuteContract.fromJSON({
-        sender: index_1.INJECTIVE_WALLET.getAddress(),
-        contractAddress: UNISPOT_CONTRACT_ADDRESS,
-        msg: {
-            update_price_feeds: {
-                data: [btoa(price)],
+    try {
+        const msg = sdk_ts_1.MsgExecuteContractCompat.fromJSON({
+            contractAddress: UNISPOT_CONTRACT_ADDRESS,
+            sender: index_1.INJECTIVE_WALLET.getAddress(),
+            msg: {
+                update_price: {
+                    pair_name: symbol,
+                    price: price,
+                },
             },
-        },
-        funds: [updateFee],
-    });
-    const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([executeMsg]);
-    console.log(`TxHash: ${res.txHash}`);
+        });
+        const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([msg]);
+        console.log('Success');
+        console.log(res);
+    }
+    catch (e) {
+        console.log(e);
+    }
+    finally {
+        console.log('Done');
+    }
 };
 main().catch((error) => {
     console.error(error);

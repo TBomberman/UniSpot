@@ -2,11 +2,10 @@ import { BigNumberish, ethers } from 'ethers'
 import { FixedNumber, BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { abi as IERC20ABI } from '@uniswap/v2-core/build/IERC20.json'
-import { MsgExecuteContract } from '@injectivelabs/sdk-ts'
-import { Coin } from '@injectivelabs/ts-types'
+import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts'
 import { INJECTIVE_WALLET } from '../constants/index'
 
-const UNISPOT_CONTRACT_ADDRESS = 'inj1cy8dm3l2una56y9zt8u95xsr73evq5rkcp958y'
+const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8'
 
 export async function main() {
   await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true)
@@ -41,27 +40,26 @@ const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
   const price = getPrice(ratioMain, 18)
   console.log(`Price for ${symbol} = ${price}`)
 
-  const updateFee = await INJECTIVE_WALLET.querySmartContract<Coin>(UNISPOT_CONTRACT_ADDRESS, {
-    get_update_fee: {
-      vaas: [btoa(price)],
-    },
-  })
-
-  // pyth update request
-  const executeMsg = MsgExecuteContract.fromJSON({
-    sender: INJECTIVE_WALLET.getAddress(),
-    contractAddress: UNISPOT_CONTRACT_ADDRESS,
-    msg: {
-      update_price_feeds: {
-        data: [btoa(price)],
+  try {
+    const msg = MsgExecuteContractCompat.fromJSON({
+      contractAddress: UNISPOT_CONTRACT_ADDRESS,
+      sender: INJECTIVE_WALLET.getAddress(),
+      msg: {
+        update_price: {
+          pair_name: symbol,
+          price: price,
+        },
       },
-    },
-    funds: [updateFee],
-  })
+    })
 
-  const res = await INJECTIVE_WALLET.signAndBroadcastMsg([executeMsg])
-
-  console.log(`TxHash: ${res.txHash}`)
+    const res = await INJECTIVE_WALLET.signAndBroadcastMsg([msg])
+    console.log('Success')
+    console.log(res)
+  } catch (e) {
+    console.log(e)
+  } finally {
+    console.log('Done')
+  }
 }
 
 main().catch((error) => {
