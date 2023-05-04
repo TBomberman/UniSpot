@@ -7,8 +7,7 @@ const IUniswapV2Pair_json_1 = require("@uniswap/v2-core/build/IUniswapV2Pair.jso
 const IERC20_json_1 = require("@uniswap/v2-core/build/IERC20.json");
 const sdk_ts_1 = require("@injectivelabs/sdk-ts");
 const index_1 = require("../constants/index");
-// import { msgBroadcastClient } from '../injective/services'
-const UNISPOT_CONTRACT_ADDRESS = 'inj15nmsql52q36utj5cy3gm44nhxmdlx7mhg2hh0c';
+const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8';
 async function main() {
     await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true);
     await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true);
@@ -39,27 +38,19 @@ const getPriceData = async (pairAddrMain, tokensReversed) => {
     const price = getPrice(ratioMain, 18);
     console.log(`Price for ${symbol} = ${price}`);
     try {
-        const updateFee = await index_1.INJECTIVE_WALLET.querySmartContract(UNISPOT_CONTRACT_ADDRESS, {
-            get_update_fee: {
-                vaas: [btoa(price)],
-            },
-        });
-        updateFee.amount = '0u';
         const msg = sdk_ts_1.MsgExecuteContractCompat.fromJSON({
             contractAddress: UNISPOT_CONTRACT_ADDRESS,
             sender: index_1.INJECTIVE_WALLET.getAddress(),
             msg: {
-                update_price_feeds: {
-                    data: [btoa(price)],
+                update_price: {
+                    pair_name: symbol,
+                    price: price,
                 },
             },
-            funds: [updateFee],
         });
         const res = await index_1.INJECTIVE_WALLET.signAndBroadcastMsg([msg]);
-        // await msgBroadcastClient.broadcast({
-        //   msgs: msg,
-        //   injectiveAddress: INJECTIVE_WALLET.getAddress(),
-        // })
+        console.log('Success');
+        console.log(res);
     }
     catch (e) {
         console.log(e);
@@ -67,25 +58,6 @@ const getPriceData = async (pairAddrMain, tokensReversed) => {
     finally {
         console.log('Done');
     }
-    // const updateFee = await INJECTIVE_WALLET.querySmartContract<Coin>(UNISPOT_CONTRACT_ADDRESS, {
-    //   get_update_fee: {
-    //     vaas: [btoa(price)],
-    //   },
-    // })
-    // // pyth update request
-    // updateFee.amount = '100000'
-    // const executeMsg = MsgExecuteContract.fromJSON({
-    //   sender: INJECTIVE_WALLET.getAddress(),
-    //   contractAddress: UNISPOT_CONTRACT_ADDRESS,
-    //   msg: {
-    //     update_price_feeds: {
-    //       data: [btoa(price)],
-    //     },
-    //   },
-    //   funds: [updateFee],
-    // })
-    // const res = await INJECTIVE_WALLET.signAndBroadcastMsg([executeMsg])
-    // console.log(`TxHash: ${res.txHash}`)
 };
 main().catch((error) => {
     console.error(error);
