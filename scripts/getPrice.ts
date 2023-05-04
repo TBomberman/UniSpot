@@ -8,9 +8,12 @@ import { INJECTIVE_WALLET } from '../constants/index'
 const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8'
 
 export async function main() {
-  await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true)
-  await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true)
-  await getPriceData('0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852', true)
+  await getPriceData('0x3041cbd36888becc7bbcbc0045e3b1f144466f5f', true) // USDC
+  await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true) // DOGE
+  await getPriceData('0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852', true) // ETH
+  await getPriceData('0x61b62c5d56ccd158a38367ef2f539668a06356ab', true) // FNK
+  await getPriceData('0xf8d99cf7046dedcb1dc8cfc309aa96946c9b9db2', true) // XFIT
+  await getPriceData('0xa2f6a219a51b4682e34a13a94c160d6c79cdca35', true) // FILST
 }
 
 const formatPx = (value: BigNumber, decimals?: BigNumberish) => {
@@ -33,12 +36,15 @@ const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
   let ratioMain = await uniPairMain.getReserves()
   const tokenA = await uniPairMain.token0()
   const token0 = new ethers.Contract(tokenA, IERC20ABI, provider)
-  const symbol = await token0.symbol()
+  const tokenB = await uniPairMain.token1()
+  const token1 = new ethers.Contract(tokenB, IERC20ABI, provider)
+  const symbolA = await token0.symbol()
+  const symbolB = await token1.symbol()
   if (tokensReversed) {
     ratioMain = [ratioMain[1], ratioMain[0]]
   }
   const price = getPrice(ratioMain, 18)
-  console.log(`Price for ${symbol} = ${price}`)
+  console.log(`Price for ${symbolA} / ${symbolB} = ${price}`)
 
   try {
     const msg = MsgExecuteContractCompat.fromJSON({
@@ -46,7 +52,7 @@ const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
       sender: INJECTIVE_WALLET.getAddress(),
       msg: {
         update_price: {
-          pair_name: symbol,
+          pair_name: `${symbolA}/${symbolB}`,
           price: price,
         },
       },
