@@ -26,6 +26,12 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 Run `pm2 start sh ./scripts/fetchPrice.sh --no-autorestart --instances 1 --cron "*/5 * * * *"` to start the price updater. (Stop and delete any existing service.)
 
+## Deploy to Server
+
+Build using `yarn build`
+Delete any existing PM2 service named unispot-app.sh.
+Serve the app by calling `pm2 start yarn --interpreter bash --name api -- demo`
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
