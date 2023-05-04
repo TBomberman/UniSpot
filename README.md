@@ -28,9 +28,9 @@ Run `pm2 start sh ./scripts/fetchPrice.sh --no-autorestart --instances 1 --cron 
 
 ## Deploy to Server
 
+Install `yarn`
 Build using `yarn build`
-Delete any existing PM2 service named unispot-app.sh.
-Serve the app by calling `pm2 start yarn --interpreter bash --name api -- demo`
+Serve the app by calling `pm2 start yarn -- start`
 
 ## Learn More
 
