@@ -95,8 +95,8 @@ export default function Home() {
         {!isPyth && (
           <>
             <div className={'flex w-full justify-between items-center mb-8'}>
-              <div className={'text-4xl font-bold'}>
-                <p>UniSpot Crypto Prices</p>
+              <div className={'text-4xl font-bold mb-2 text-zinc-600'}>
+                <p >UniSpot Prices on Injective</p>
               </div>
             </div>
             <div className="container mx-auto px-4 py-8">
@@ -107,8 +107,8 @@ export default function Home() {
         {isPyth && (
           <>
             <div className={'flex w-full justify-between items-center mb-8'}>
-              <div className={'text-4xl font-bold'}>
-                <p>Pyth Crypto Prices</p>
+              <div className={'text-4xl font-bold mb-2 text-zinc-600'}>
+                <p>Pyth Prices on Injective</p>
               </div>
             </div>
             <div className="container mx-auto px-4 py-8">

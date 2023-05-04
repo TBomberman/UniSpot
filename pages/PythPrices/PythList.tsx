@@ -70,7 +70,10 @@ const PythList = () => {
         const response = await chainGrpcWasmApi.fetchSmartContractState(PYTH_CONTRACT_ADDR, toBase64({ price_feed: { id: prices[i].id } }))
         const stateString: string = new TextDecoder().decode(response.data)
         const state = JSON.parse(stateString)
-        oldPrice[i].price = `$${parseFloat(state.price_feed.price.price).toFixed(4)}`
+        let price = parseFloat(state.price_feed.price.price)
+        let expo = parseFloat(state.price_feed.price.expo)
+        let parsedPrice = price*(10**expo)
+        oldPrice[i].price = parsedPrice.toFixed(4)
       }
       setPrices(oldPrice)
       setFetching(false)
