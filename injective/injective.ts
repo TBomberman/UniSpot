@@ -1,11 +1,8 @@
 import { ChainGrpcAuthApi, ChainGrpcWasmApi, Msgs, PrivateKey, TxGrpcClient, TxResponse, createTransactionFromMsg } from '@injectivelabs/sdk-ts'
-import { DEFAULT_GAS_PRICE } from '@injectivelabs/utils'
 
 export class Injective {
   private readonly wallet: PrivateKey
   private readonly chainId = 'injective-888'
-  private readonly gasMultiplier = 1.8
-  private readonly gasPrice = DEFAULT_GAS_PRICE
 
   constructor(private readonly grpcEndpoint: string, readonly mnemonic: string) {
     this.wallet = PrivateKey.fromMnemonic(mnemonic)
@@ -18,39 +15,13 @@ export class Injective {
   async signAndBroadcastMsg(msg: Msgs | Msgs[]): Promise<TxResponse> {
     const chainGrpcAuthApi = new ChainGrpcAuthApi(this.grpcEndpoint)
     const account = await chainGrpcAuthApi.fetchAccount(this.getAddress())
-    const { txRaw: simulateTxRaw } = createTransactionFromMsg({
-      sequence: account.baseAccount.sequence,
-      accountNumber: account.baseAccount.accountNumber,
-      message: msg,
-      chainId: this.chainId,
-      pubKey: this.wallet.toPublicKey().toBase64(),
-    })
-
     const txService = new TxGrpcClient(this.grpcEndpoint)
-    // simulation
-    // FIXME: Error is occurring in the simulate function
-    // const {
-    //   gasInfo: { gasUsed },
-    // } = await txService.simulate(simulateTxRaw)
-
-    console.log(`Estimated gas: ${30000000} | Estimated fee: ${`${30000000 * this.gasPrice * this.gasMultiplier}`} INJ`)
-
-    const fee = {
-      amount: [
-        {
-          denom: 'inj',
-          amount: (30000000 * this.gasPrice * this.gasMultiplier).toFixed(),
-        },
-      ],
-      gas: (30000000 * this.gasMultiplier).toFixed(),
-    }
 
     const { signBytes, txRaw } = createTransactionFromMsg({
       sequence: account.baseAccount.sequence,
       accountNumber: account.baseAccount.accountNumber,
       message: msg,
       chainId: this.chainId,
-      fee,
       pubKey: this.wallet.toPublicKey().toBase64(),
     })
 

@@ -2,14 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Injective = void 0;
 const sdk_ts_1 = require("@injectivelabs/sdk-ts");
-const utils_1 = require("@injectivelabs/utils");
 class Injective {
     constructor(grpcEndpoint, mnemonic) {
         this.grpcEndpoint = grpcEndpoint;
         this.mnemonic = mnemonic;
         this.chainId = 'injective-888';
-        this.gasMultiplier = 1.8;
-        this.gasPrice = utils_1.DEFAULT_GAS_PRICE;
         this.wallet = sdk_ts_1.PrivateKey.fromMnemonic(mnemonic);
     }
     getAddress() {
@@ -18,35 +15,12 @@ class Injective {
     async signAndBroadcastMsg(msg) {
         const chainGrpcAuthApi = new sdk_ts_1.ChainGrpcAuthApi(this.grpcEndpoint);
         const account = await chainGrpcAuthApi.fetchAccount(this.getAddress());
-        const { txRaw: simulateTxRaw } = (0, sdk_ts_1.createTransactionFromMsg)({
-            sequence: account.baseAccount.sequence,
-            accountNumber: account.baseAccount.accountNumber,
-            message: msg,
-            chainId: this.chainId,
-            pubKey: this.wallet.toPublicKey().toBase64(),
-        });
         const txService = new sdk_ts_1.TxGrpcClient(this.grpcEndpoint);
-        // simulation
-        // FIXME: Error is occurring in the simulate function
-        // const {
-        //   gasInfo: { gasUsed },
-        // } = await txService.simulate(simulateTxRaw)
-        console.log(`Estimated gas: ${30000000} | Estimated fee: ${`${30000000 * this.gasPrice * this.gasMultiplier}`} INJ`);
-        const fee = {
-            amount: [
-                {
-                    denom: 'inj',
-                    amount: (30000000 * this.gasPrice * this.gasMultiplier).toFixed(),
-                },
-            ],
-            gas: (30000000 * this.gasMultiplier).toFixed(),
-        };
         const { signBytes, txRaw } = (0, sdk_ts_1.createTransactionFromMsg)({
             sequence: account.baseAccount.sequence,
             accountNumber: account.baseAccount.accountNumber,
             message: msg,
             chainId: this.chainId,
-            fee,
             pubKey: this.wallet.toPublicKey().toBase64(),
         });
         const sig = await this.wallet.sign(Buffer.from(signBytes));
