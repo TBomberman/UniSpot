@@ -8,29 +8,35 @@ import { INJECTIVE_WALLET } from '../constants/index'
 const UNISPOT_CONTRACT_ADDRESS = 'inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8'
 
 export async function main() {
-  await getPriceData('0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852', true) // ETH-USDT
-  await getPriceData('0xbb2b8038a1640196fbe3e38816f3e67cba72d940', true) // WBTC-ETH
-  await getPriceData('0xd3d2e2692501a5c9ca623199d38826e513033a17', true) // UNI-ETH
-  await getPriceData('0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd', true) // DOGE-USDT
-  await getPriceData('0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5', true) // DAI-USDC
-  await getPriceData('0x819f3450da6f110ba6ea52195b3beafa246062de', true) // MATIC-ETH
+  await getPriceData("0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852", [18,6], true); // ETH-USDT
+  await getPriceData("0xbb2b8038a1640196fbe3e38816f3e67cba72d940", [18,18], false); // WBTC-ETH
+  // await getPriceData("0xd3d2e2692501a5c9ca623199d38826e513033a17", [18,18], true); // UNI-ETH
+  // await getPriceData("0xfcd13ea0b906f2f87229650b8d93a51b2e839ebd", [18,18], true); // DOGE-USDT
+  // await getPriceData("0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5", [18,18], true); // DAI-USDC
+  // await getPriceData("0x819f3450da6f110ba6ea52195b3beafa246062de", [18,18], true); // MATIC-ETH
 }
 
-const formatPx = (value: BigNumber, decimals?: BigNumberish) => {
-  return FixedNumber.fromValue(value, decimals).toString()
+const formatPx = (value: BigNumber, decimals: number[]) => {
+  const formatDecimals = 18 + decimals[0] - decimals [1]
+  return FixedNumber.fromValue(value, formatDecimals).toString()
 }
 
-const calcPrice = (reserve0: BigNumber, reserve1: BigNumber, factor1: BigNumber) => {
-  return BigNumber.from(reserve1).gt(0) ? BigNumber.from(reserve0).mul(factor1).div(BigNumber.from(reserve1)) : BigNumber.from(0)
+const calcPriceIn18 = (reserve0: BigNumber, reserve1: BigNumber) => {
+  const baseFactor = BigNumber.from(10).pow(18)
+  return BigNumber.from(reserve0).mul(baseFactor).div(BigNumber.from(reserve1))
 }
 
-const getPrice = (ratios: BigNumber[], decimals: number) => {
-  const factor = BigNumber.from(10).pow(decimals)
-  const priceInX = calcPrice(ratios[0], ratios[1], factor)
+const getPrice = (ratios: BigNumber[], decimals: number[]) => {
+  const priceInX = calcPriceIn18(ratios[0], ratios[1])
   return formatPx(priceInX, decimals)
 }
 
-const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
+const getPriceData = async (
+  pairAddrMain: string,
+  decimalsLocal: number[],
+  tokensReversed: boolean
+) => {
+  console.log("pairAddrMain", pairAddrMain);
   const provider = new ethers.InfuraProvider('homestead', 'af5e7f550821452ba99cb73d238692c0')
   const uniPairMain = new ethers.Contract(pairAddrMain, IUniswapV2PairABI, provider)
   let ratioMain = await uniPairMain.getReserves()
@@ -40,11 +46,13 @@ const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
   const token1 = new ethers.Contract(tokenB, IERC20ABI, provider)
   const symbol0 = await token0.symbol()
   const symbol1 = await token1.symbol()
+
   const pairName = tokensReversed ? symbol0 + '-' + symbol1 : symbol1 + '-' + symbol0
   if (tokensReversed) {
     ratioMain = [ratioMain[1], ratioMain[0]]
+    decimalsLocal = [decimalsLocal[1], decimalsLocal[0]];
   }
-  const price = getPrice(ratioMain, 18)
+  const price = getPrice(ratioMain, decimalsLocal);
   console.log(`Price for ${pairName} = ${price}`)
 
   try {
@@ -61,7 +69,7 @@ const getPriceData = async (pairAddrMain: string, tokensReversed: boolean) => {
 
     const res = await INJECTIVE_WALLET.signAndBroadcastMsg([msg])
     console.log('Success')
-    console.log(res)
+    // console.log(res)
   } catch (e) {
     console.log(e)
   } finally {
