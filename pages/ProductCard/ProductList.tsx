@@ -69,7 +69,7 @@ const ProductList = () => {
         const response = await chainGrpcWasmApi.fetchSmartContractState('inj12zgysmc6zgd0d0hv00fhueeyc6axwgww5rz2t8', toBase64({ get_price: { pair_name: prices[i].name } }))
         const stateString: string = new TextDecoder().decode(response.data)
         const state = JSON.parse(stateString)
-        oldPrice[i].price = `$${parseFloat(state.price.price).toFixed(2)}`
+        oldPrice[i].price = `$${parseFloat(state.price.price).toFixed(4)}`
       }
       setPrices(oldPrice)
       setFetching(false)
