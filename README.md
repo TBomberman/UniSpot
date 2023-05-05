@@ -29,8 +29,13 @@ Run `pm2 start sh ./scripts/fetchPrice.sh --no-autorestart --instances 1 --cron 
 ## Deploy to Server
 
 Install `yarn`
-Build using `yarn build`
-Serve the app by calling `pm2 start yarn -- start`
+
+Build `yarn build`
+
+Serve `pm2 start yarn -- start`
+
+## Contracts Test
+See `contracts\README.md`
 
 ## Learn More
 
