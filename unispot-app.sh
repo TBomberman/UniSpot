@@ -1,3 +1,3 @@
 #!/bin/bash
 
-serve -s build -l 3020
+yarn next start -p 3020
