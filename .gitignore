@@ -44,7 +44,6 @@ bin
 target
 /mutagen.sh
 venv
-.env
 bigtable-admin.json
 bigtable-writer.json
 .vscode
@@ -57,3 +56,4 @@ tsconfig.tsbuildinfo
 .DS_Store
 artifacts
 target
+config.bat
